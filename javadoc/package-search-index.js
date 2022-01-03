@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"org.tquadrat.foundation.inifile","l":"org.tquadrat.foundation.inifile"},{"m":"org.tquadrat.foundation.inifile","l":"org.tquadrat.foundation.inifile.internal"}];updateSearchResults();

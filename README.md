@@ -1,5 +1,5 @@
-# tquadrat *Foundation Library*
-## `foundation-inifile`
+An API for the access to Windows-style configuratin files (*INI-Files*).
+
 ### Documentation
 
-- [Javadoc Reference](https://htmlpreview.github.io/?https://github.com/tquadrat/foundation-inifile/blob/master/javadoc/index.html)
+- [Javadoc Reference](https://tquadrat.github.io/foundation-inifile/javadoc/index.html)

@@ -20,7 +20,13 @@
  *  {@link org.tquadrat.foundation.inifile.INIFile}.
  */
 
+@API( status = INTERNAL, since = "0.1.0" )
 package org.tquadrat.foundation.inifile.internal;
+
+import static org.apiguardian.api.API.Status.INTERNAL;
+
+import org.apiguardian.api.API;
+
 /*
  *  End of File
  */

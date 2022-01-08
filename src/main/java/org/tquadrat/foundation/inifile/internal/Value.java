@@ -17,7 +17,7 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
-import static org.apiguardian.api.API.Status.STABLE;
+import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
@@ -37,13 +37,13 @@ import org.tquadrat.foundation.lang.Objects;
  *  The container for the value of an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Value.java 937 2021-12-14 21:59:00Z tquadrat $
+ *  @version $Id: Value.java 980 2022-01-06 15:29:19Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: Value.java 937 2021-12-14 21:59:00Z tquadrat $" )
-@API( status = STABLE, since = "0.1.0" )
+@ClassVersion( sourceVersion = "$Id: Value.java 980 2022-01-06 15:29:19Z tquadrat $" )
+@API( status = INTERNAL, since = "0.1.0" )
 public final class Value
 {
         /*------------*\
@@ -57,7 +57,7 @@ public final class Value
     /**
      *  The reference to the parent group.
      */
-    @SuppressWarnings( "InstanceVariableOfConcreteClass" )
+    @SuppressWarnings( "UseOfConcreteClass" )
     private final Group m_Group;
 
     /**

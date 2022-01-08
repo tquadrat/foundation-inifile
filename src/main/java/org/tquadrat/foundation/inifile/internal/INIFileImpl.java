@@ -24,7 +24,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Comparator.comparing;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
-import static org.apiguardian.api.API.Status.STABLE;
+import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.CommonConstants.UTF8;
 import static org.tquadrat.foundation.lang.Objects.isNull;
@@ -63,13 +63,13 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 946 2021-12-23 14:48:19Z tquadrat $
+ *  @version $Id: INIFileImpl.java 980 2022-01-06 15:29:19Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 946 2021-12-23 14:48:19Z tquadrat $" )
-@API( status = STABLE, since = "0.1.0" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 980 2022-01-06 15:29:19Z tquadrat $" )
+@API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
         /*------------*\

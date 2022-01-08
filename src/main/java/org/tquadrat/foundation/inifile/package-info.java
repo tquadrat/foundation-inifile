@@ -28,8 +28,8 @@
  *
  *  [otherGroup]
  *  key=value
- *  otherkey=otherValue
- *  key1=longvalue\
+ *  otherKey=otherValue
+ *  key1=longValue\
  *  continued in the next line
  *  text=Values may contain escape sequences like \n for new lines, \
  *  and \t for tabs.
@@ -47,7 +47,12 @@
  *  </ul>
  */
 
+@API( status = STABLE, since = "0.1.0" )
 package org.tquadrat.foundation.inifile;
+
+import static org.apiguardian.api.API.Status.STABLE;
+
+import org.apiguardian.api.API;
 
 /*
  *  End of File

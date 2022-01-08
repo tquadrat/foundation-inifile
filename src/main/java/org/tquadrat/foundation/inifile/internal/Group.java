@@ -17,7 +17,7 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
-import static org.apiguardian.api.API.Status.STABLE;
+import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
@@ -41,13 +41,13 @@ import org.tquadrat.foundation.annotation.ClassVersion;
  *  The group for an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Group.java 940 2021-12-16 13:55:52Z tquadrat $
+ *  @version $Id: Group.java 980 2022-01-06 15:29:19Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: Group.java 940 2021-12-16 13:55:52Z tquadrat $" )
-@API( status = STABLE, since = "0.1.0" )
+@ClassVersion( sourceVersion = "$Id: Group.java 980 2022-01-06 15:29:19Z tquadrat $" )
+@API( status = INTERNAL, since = "0.1.0" )
 public final class Group
 {
         /*------------*\

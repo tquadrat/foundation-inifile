@@ -17,6 +17,9 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.notExists;
 import static java.nio.file.Files.readAllLines;
 import static java.nio.file.Files.writeString;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -406,8 +409,11 @@ public final class INIFileImpl implements INIFile
      */
     private final void parse() throws IOException
     {
-        final var lines = joinLines( readAllLines( m_File, UTF8 ) );
-        parse( lines );
+        if( exists( m_File ) )
+        {
+            final var lines = joinLines( readAllLines( m_File, UTF8 ) );
+            parse( lines );
+        }
     }   //  parse()
 
     /**
@@ -496,6 +502,11 @@ public final class INIFileImpl implements INIFile
      */
     public final void save() throws IOException
     {
+        if( notExists( m_File ) )
+        {
+            final var folder = m_File.getParent();
+            if( notExists( folder ) ) createDirectories( folder );
+        }
         m_LastUpdated = Instant.now();
         writeString( m_File, dumpContents(), UTF8, CREATE, WRITE );
     }   //  save()

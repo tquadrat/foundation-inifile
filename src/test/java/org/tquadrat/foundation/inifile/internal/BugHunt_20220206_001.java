@@ -45,10 +45,10 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
 /**
  *  Issues when the INI file does not exist.
  *
- *  @version $Id: HexUtils.java 747 2020-12-01 12:40:38Z tquadrat $
+ *  @version $Id: BugHunt_20220206_001.java 1015 2022-02-09 08:25:36Z tquadrat $
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
  */
-@ClassVersion( sourceVersion = "$Id: HexUtils.java 747 2020-12-01 12:40:38Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: BugHunt_20220206_001.java 1015 2022-02-09 08:25:36Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 @DisplayName( "org.tquadrat.foundation.inifile.internal.BugHunt_20220206_001" )
 public class BugHunt_20220206_001 extends TestBaseClass

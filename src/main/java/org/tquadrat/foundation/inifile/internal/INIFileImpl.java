@@ -66,12 +66,12 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 980 2022-01-06 15:29:19Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1015 2022-02-09 08:25:36Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 980 2022-01-06 15:29:19Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1015 2022-02-09 08:25:36Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {

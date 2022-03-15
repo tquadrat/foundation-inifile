@@ -42,6 +42,7 @@ import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.Collator;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,18 +67,25 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 1015 2022-02-09 08:25:36Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1029 2022-03-15 00:29:29Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1015 2022-02-09 08:25:36Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1029 2022-03-15 00:29:29Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
         /*------------*\
     ====** Attributes **=======================================================
         \*------------*/
+    /**
+     *  The clock that is used to determine the last update. This is changed
+     *  only for testing purposes, the default is
+     *  {@link Clock#systemDefaultZone()}.
+     */
+    private Clock m_Clock = Clock.systemDefaultZone();
+
     /**
      *  The collator the is used for sorting the groups and entries if
      *  requested.
@@ -119,6 +127,7 @@ public final class INIFileImpl implements INIFile
 
     static
     {
+        @SuppressWarnings( "LocalVariableNamingConvention" )
         final var s = "# Last Update: ";
         LAST_UPDATED_FORMAT = format( "%s%%s", s );
 
@@ -150,7 +159,7 @@ public final class INIFileImpl implements INIFile
     {
         m_Collator = Collator.getInstance();
         m_File = file;
-        m_LastUpdated = Instant.now();
+        m_LastUpdated = Instant.now( m_Clock );
     }   //  INIFileImpl()
 
         /*---------*\
@@ -174,6 +183,7 @@ public final class INIFileImpl implements INIFile
         requireNotEmptyArgument( group, "group" );
         if( isNotEmptyOrBlank( comment ) )
         {
+            @SuppressWarnings( "LocalVariableNamingConvention" )
             final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
             g.addComment( comment );
         }
@@ -189,6 +199,7 @@ public final class INIFileImpl implements INIFile
         requireNotEmptyArgument( key, "key" );
         if( isNotEmptyOrBlank( comment ) )
         {
+            @SuppressWarnings( "LocalVariableNamingConvention" )
             final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
             g.addComment( key, comment );
         }
@@ -283,6 +294,7 @@ public final class INIFileImpl implements INIFile
         Optional<String> retValue = Optional.empty();
         if( isNotEmpty( group ) )
         {
+            @SuppressWarnings( "LocalVariableNamingConvention" )
             final var g = m_Groups.get( group );
             if( nonNull( g ) )
             {
@@ -371,6 +383,7 @@ public final class INIFileImpl implements INIFile
         final List<Entry> buffer = new ArrayList<>();
         for( final var group : m_Groups.keySet() )
         {
+            @SuppressWarnings( "LocalVariableNamingConvention" )
             final var g = m_Groups.get( group );
             for( final var key : g.getKeys() )
             {
@@ -428,6 +441,7 @@ public final class INIFileImpl implements INIFile
     {
         Group currentGroup = null;
         final Collection<String> commentBuffer = new ArrayList<>();
+        m_Comment.setLength( 0 );
         var commentsToBuffer = false;
 
         final var errorMessage = Lazy.use( () -> format( "'%s' has invalid structure", PathStringConverter.INSTANCE.toString( m_File ) ) );
@@ -445,6 +459,7 @@ public final class INIFileImpl implements INIFile
             if( line.startsWith( "#" ) )
             {
                 //---* Comment line found *------------------------------------
+                @SuppressWarnings( "LocalVariableNamingConvention" )
                 final var s = (line.length() > 1 ? line.substring( 1 ).trim() : EMPTY_STRING);
                 if( commentsToBuffer )
                 {
@@ -507,9 +522,23 @@ public final class INIFileImpl implements INIFile
             final var folder = m_File.getParent();
             if( notExists( folder ) ) createDirectories( folder );
         }
-        m_LastUpdated = Instant.now();
+        m_LastUpdated = Instant.now( m_Clock );
         writeString( m_File, dumpContents(), UTF8, CREATE, WRITE );
     }   //  save()
+
+    /**
+     *  <p>{@summary Sets the clock that is used to determine the last
+     *  update.}</p>
+     *  <p>This is used only for testing purposes.</p>
+     *
+     *  @param  clock   The clock.
+     */
+    @SuppressWarnings( "PublicMethodNotExposedInInterface" )
+    public final void setClock( final Clock clock )
+    {
+        m_Clock = requireNonNullArgument( clock, "clock" );
+        m_LastUpdated = Instant.now( clock );
+    }   //  setClock()
 
     /**
      *  {@inheritDoc}
@@ -517,6 +546,7 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void setValue( final String group, final String key, final String value )
     {
+        @SuppressWarnings( "LocalVariableNamingConvention" )
         final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
         g.setValue( key, value );
     }   //  setValue()

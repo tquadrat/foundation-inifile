@@ -378,6 +378,7 @@ public final class INIFileImpl implements INIFile
     /**
      *  {@inheritDoc}
      */
+    @Override
     public final Collection<Entry> listEntries()
     {
         final List<Entry> buffer = new ArrayList<>();
@@ -515,6 +516,7 @@ public final class INIFileImpl implements INIFile
      *  @throws IOException  A problem occurred when writing the contents to
      *      the file.
      */
+    @Override
     public final void save() throws IOException
     {
         if( notExists( m_File ) )

@@ -59,9 +59,12 @@ public sealed interface INIFile
      *  @UMLGraph.link
      *  @since 0.1.0
      */
-    @SuppressWarnings( "InnerClassOfInterface" )
+    @SuppressWarnings( {"InnerClassOfInterface", "NewClassNamingConvention"} )
     public record Entry( String group, String key, String value )
     {
+            /*---------*\
+        ====** Methods **======================================================
+            \*---------*/
         /**
          *  Retrieves the value and translates it to the desired type.
          *
@@ -82,6 +85,7 @@ public sealed interface INIFile
         /**
          *  {@inheritDoc}
          */
+        @Override
         public final String toString() { return format( "%s/%s = %s", group, key, value ); }
     }
     //  record Entry
@@ -207,6 +211,7 @@ public sealed interface INIFile
      *  @return {@code true} if there is a group with the given name,
      *      {@code false} otherwise.
      */
+    @SuppressWarnings( "BooleanMethodIsAlwaysInverted" )
     public boolean hasGroup( final String group );
 
     /**
@@ -217,6 +222,7 @@ public sealed interface INIFile
      *  @return {@code true} if there is an entry with the given key,
      *      {@code false} otherwise.
      */
+    @SuppressWarnings( "BooleanMethodIsAlwaysInverted" )
     public boolean hasValue( final String group, final String key );
 
     /**

@@ -37,12 +37,12 @@ import org.tquadrat.foundation.lang.StringConverter;
  *  @note   Changes will not be persisted automatically!
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFile.java 946 2021-12-23 14:48:19Z tquadrat $
+ *  @version $Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFile.java 946 2021-12-23 14:48:19Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 public sealed interface INIFile
     permits org.tquadrat.foundation.inifile.internal.INIFileImpl
@@ -54,7 +54,7 @@ public sealed interface INIFile
      *  An entry for the INI file.
      *
      *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
-     *  @version $Id: INIFile.java 946 2021-12-23 14:48:19Z tquadrat $
+     *  @version $Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $
      *
      *  @UMLGraph.link
      *  @since 0.1.0

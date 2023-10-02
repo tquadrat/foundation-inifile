@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2023 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -17,13 +17,13 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.lang.String.format;
 import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
-import static org.tquadrat.foundation.util.StringUtils.format;
 
 import java.util.Collection;
 import java.util.Map;
@@ -41,12 +41,13 @@ import org.tquadrat.foundation.annotation.ClassVersion;
  *  The group for an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Group.java 980 2022-01-06 15:29:19Z tquadrat $
+ *  @version $Id: Group.java 1062 2023-09-25 23:11:41Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: Group.java 980 2022-01-06 15:29:19Z tquadrat $" )
+@SuppressWarnings( "NewClassNamingConvention" )
+@ClassVersion( sourceVersion = "$Id: Group.java 1062 2023-09-25 23:11:41Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class Group
 {
@@ -56,6 +57,7 @@ public final class Group
     /**
      *  The comment for this group.
      */
+    @SuppressWarnings( "StringBufferField" )
     private final StringBuilder m_Comment = new StringBuilder();
 
     /**
@@ -118,7 +120,6 @@ public final class Group
      *  @param  key The name of the value.
      *  @return The new instance.
      */
-    @SuppressWarnings( "UseOfConcreteClass" )
     private final Value createValue( final String key )
     {
         return new Value( this, requireNotEmptyArgument( key, "key" ) );
@@ -132,7 +133,7 @@ public final class Group
     public final boolean equals( final Object o )
     {
         var retValue = this == o;
-        if( !retValue && o instanceof Group other )
+        if( !retValue && o instanceof final Group other )
         {
             retValue = m_Comment.equals( other.m_Comment )
                 && m_Name.equals( other.m_Name )
@@ -187,7 +188,6 @@ public final class Group
      *      {@link Value}
      *      for the new value.
      */
-    @SuppressWarnings( "UseOfConcreteClass" )
     public final Value setValue( final String key, final String value )
     {
         final var retValue = m_Values.computeIfAbsent( requireNotEmptyArgument( key, "key" ), this::createValue );

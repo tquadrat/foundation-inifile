@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2023 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.lang.String.format;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.notExists;
@@ -35,7 +36,6 @@ import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
 import static org.tquadrat.foundation.util.StringUtils.breakText;
-import static org.tquadrat.foundation.util.StringUtils.format;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmpty;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
@@ -67,12 +67,12 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 1052 2023-03-06 06:30:36Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1062 2023-09-25 23:11:41Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1052 2023-03-06 06:30:36Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1062 2023-09-25 23:11:41Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
@@ -95,6 +95,7 @@ public final class INIFileImpl implements INIFile
     /**
      *  The comment for this file.
      */
+    @SuppressWarnings( "StringBufferField" )
     private final StringBuilder m_Comment = new StringBuilder();
 
     /**
@@ -220,6 +221,7 @@ public final class INIFileImpl implements INIFile
         final var builder = Stream.<String>builder();
         while( remainder.length() > LINE_LENGTH )
         {
+            //noinspection ConstantExpression
             builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH - 1 ) ) );
             remainder = remainder.substring( LINE_LENGTH );
         }
@@ -256,7 +258,6 @@ public final class INIFileImpl implements INIFile
      *  @param  group   The name of the group.
      *  @return The new instance.
      */
-    @SuppressWarnings( "UseOfConcreteClass" )
     private final Group createGroup( final String group )
     {
         return new Group( requireNotEmptyArgument( group, "group" ) );
@@ -437,7 +438,7 @@ public final class INIFileImpl implements INIFile
      *      multi-line constructs.
      *  @throws IOException The structure is invalid.
      */
-    @SuppressWarnings( "PublicMethodNotExposedInInterface" )
+    @SuppressWarnings( {"PublicMethodNotExposedInInterface", "OverlyComplexMethod"} )
     public final void parse( final List<String> lines ) throws IOException
     {
         Group currentGroup = null;
@@ -445,7 +446,7 @@ public final class INIFileImpl implements INIFile
         m_Comment.setLength( 0 );
         var commentsToBuffer = false;
 
-        final var errorMessage = Lazy.use( () -> format( "'%s' has invalid structure", PathStringConverter.INSTANCE.toString( m_File ) ) );
+        final var errorMessage = Lazy.use( () -> "'%s' has invalid structure".formatted( PathStringConverter.INSTANCE.toString( m_File ) ) );
 
         final var groupPattern = compile( "\\[(.*)]" );
         ScanLoop: for( final var line : requireNonNullArgument( lines, "lines" ) )
@@ -565,6 +566,7 @@ public final class INIFileImpl implements INIFile
 
         if( !requireNonNullArgument( comment, "comment" ).isEmpty() )
         {
+            //noinspection ConstantExpression
             breakText( comment, LINE_LENGTH - 2 )
                 .map( "# "::concat )
                 .map( String::trim )
@@ -578,6 +580,7 @@ public final class INIFileImpl implements INIFile
     /**
      *  {@inheritDoc}
      */
+    @Override
     public final String toString() { return dumpContents(); }
 }
 //  class INIFileImpl

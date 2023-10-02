@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2023 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -17,9 +17,9 @@
 
 package org.tquadrat.foundation.inifile;
 
+import static java.lang.String.format;
 import static org.apiguardian.api.API.Status.STABLE;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
-import static org.tquadrat.foundation.util.StringUtils.format;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -37,12 +37,12 @@ import org.tquadrat.foundation.lang.StringConverter;
  *  @note   Changes will not be persisted automatically!
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $
+ *  @version $Id: INIFile.java 1062 2023-09-25 23:11:41Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFile.java 1062 2023-09-25 23:11:41Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 public sealed interface INIFile
     permits org.tquadrat.foundation.inifile.internal.INIFileImpl
@@ -54,7 +54,7 @@ public sealed interface INIFile
      *  An entry for the INI file.
      *
      *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
-     *  @version $Id: INIFile.java 1052 2023-03-06 06:30:36Z tquadrat $
+     *  @version $Id: INIFile.java 1062 2023-09-25 23:11:41Z tquadrat $
      *
      *  @UMLGraph.link
      *  @since 0.1.0

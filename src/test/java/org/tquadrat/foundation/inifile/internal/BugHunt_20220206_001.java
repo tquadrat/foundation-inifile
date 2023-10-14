@@ -17,6 +17,7 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.lang.String.format;
 import static java.nio.file.Files.createTempDirectory;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.notExists;
@@ -25,7 +26,6 @@ import static org.apiguardian.api.API.Status.STABLE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
-import static org.tquadrat.foundation.util.StringUtils.format;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,10 +45,10 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
 /**
  *  Issues when the INI file does not exist.
  *
- *  @version $Id: BugHunt_20220206_001.java 1015 2022-02-09 08:25:36Z tquadrat $
+ *  @version $Id: BugHunt_20220206_001.java 1076 2023-10-03 18:36:07Z tquadrat $
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
  */
-@ClassVersion( sourceVersion = "$Id: BugHunt_20220206_001.java 1015 2022-02-09 08:25:36Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: BugHunt_20220206_001.java 1076 2023-10-03 18:36:07Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 @DisplayName( "org.tquadrat.foundation.inifile.internal.BugHunt_20220206_001" )
 public class BugHunt_20220206_001 extends TestBaseClass

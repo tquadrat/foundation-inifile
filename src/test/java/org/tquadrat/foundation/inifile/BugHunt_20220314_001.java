@@ -17,6 +17,7 @@
 
 package org.tquadrat.foundation.inifile;
 
+import static java.lang.String.format;
 import static java.nio.file.Files.deleteIfExists;
 import static java.nio.file.Files.exists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.tquadrat.foundation.util.StringUtils.capitalize;
-import static org.tquadrat.foundation.util.StringUtils.format;
 
 import java.nio.file.Path;
 import java.time.Clock;
@@ -44,10 +44,10 @@ import org.tquadrat.foundation.util.stringconverter.InstantStringConverter;
  *  The Blood Pressure Statistics application threw an OutOfMemoryError because
  *  the file comment for its ini files grew to a level of more than 400 MB.
  *
- *  @version $Id: BugHunt_20220314_001.java 1029 2022-03-15 00:29:29Z tquadrat $
+ *  @version $Id: BugHunt_20220314_001.java 1076 2023-10-03 18:36:07Z tquadrat $
  *  @author Thomas Thrien - thomas.thrien@tquadrat.org
  */
-@ClassVersion( sourceVersion = "$Id: BugHunt_20220314_001.java 1029 2022-03-15 00:29:29Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: BugHunt_20220314_001.java 1076 2023-10-03 18:36:07Z tquadrat $" )
 @DisplayName( "org.tquadrat.foundation.inifile.BugHunt_20220314_001" )
 public class BugHunt_20220314_001 extends TestBaseClass
 {

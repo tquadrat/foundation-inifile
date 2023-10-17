@@ -56,6 +56,10 @@ public sealed interface INIFile
      *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
      *  @version $Id: INIFile.java 1062 2023-09-25 23:11:41Z tquadrat $
      *
+     *  @param  group   The group for the entry.
+     *  @param  key The key for the entry.
+     *  @param  value   The entry's value.
+     *
      *  @UMLGraph.link
      *  @since 0.1.0
      */

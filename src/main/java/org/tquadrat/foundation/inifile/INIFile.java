@@ -17,14 +17,18 @@
 
 package org.tquadrat.foundation.inifile;
 
+import static java.lang.Integer.signum;
 import static java.lang.String.format;
 import static org.apiguardian.api.API.Status.STABLE;
+import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
+import static org.tquadrat.foundation.lang.Objects.mapFromNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apiguardian.api.API;
 import org.tquadrat.foundation.annotation.ClassVersion;
@@ -64,11 +68,34 @@ public sealed interface INIFile
      *  @since 0.1.0
      */
     @SuppressWarnings( {"InnerClassOfInterface", "NewClassNamingConvention"} )
-    public record Entry( String group, String key, String value )
+    public record Entry( String group, String key, String value ) implements Comparable<Entry>
     {
             /*---------*\
         ====** Methods **======================================================
             \*---------*/
+        /**
+         *  {@inheritDoc}
+         *
+         *  @since 0.4.3
+         */
+        @Override
+        public int compareTo( final Entry o )
+        {
+            final Supplier<String> emptyString = () -> EMPTY_STRING;
+            var retValue = signum( mapFromNull( group, emptyString ).compareTo( mapFromNull( o.group, emptyString ) ) );
+            if( retValue == 0 ) retValue = signum( mapFromNull( key, emptyString ).compareTo( mapFromNull( o.key, emptyString ) ) );
+            if( retValue == 0 ) retValue = signum( mapFromNull( value, emptyString ).compareTo( mapFromNull( o.value, emptyString ) ) );
+
+            //---* Done *------------------------------------------------------
+            return retValue;
+        }   //  compare()
+
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
+        public final String toString() { return format( "%s/%s = %s", group, key, value ); }
+
         /**
          *  Retrieves the value and translates it to the desired type.
          *
@@ -85,12 +112,6 @@ public sealed interface INIFile
             //---* Done *----------------------------------------------------------
             return retValue;
         }   //  value()
-
-        /**
-         *  {@inheritDoc}
-         */
-        @Override
-        public final String toString() { return format( "%s/%s = %s", group, key, value ); }
     }
     //  record Entry
 

@@ -7,7 +7,7 @@
      version='1.1'
      baseProfile='full'
      width='672.000'
-     height='594.000'>
+     height='616.000'>
     <defs>
         <style><![CDATA[
             line
@@ -118,7 +118,7 @@
         </marker>
         <clipPath id='ID000001'>
             <rect class='focusClass'
-                  height='172.000'
+                  height='194.000'
                   width='622.000'
                   x='0.000'
                   y='0.000'/>
@@ -130,7 +130,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='622.000'
-                          height='172.000'
+                          height='194.000'
                           class='focusClass'/>
                     <line x1='0.000'
                           y1='17.000'
@@ -157,19 +157,23 @@
                     <text x='5.000'
                           y='91.000'>+ addComment(key:java.lang.String,comment:java.lang.String):void</text>
                     <text x='5.000'
-                          y='102.000'>- createValue(key:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
+                          y='102.000'>+ compareTo(o:org.tquadrat.foundation.inifile.internal.Group):int</text>
                     <text x='5.000'
-                          y='113.000'>+ equals(o:java.lang.Object):boolean</text>
+                          y='113.000'>- createValue(key:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
                     <text x='5.000'
-                          y='124.000'>+ getKeys():java.util.Collection&lt;java.lang.String&gt;</text>
+                          y='124.000'>+ equals(o:java.lang.Object):boolean</text>
                     <text x='5.000'
-                          y='135.000'>+ getValue(key:java.lang.String):java.util.Optional&lt;org.tquadrat.foundation.inifile.internal.Value&gt;</text>
+                          y='135.000'>+ getKeys():java.util.Collection&lt;java.lang.String&gt;</text>
                     <text x='5.000'
-                          y='146.000'>+ hashCode():int</text>
+                          y='146.000'>+ getName():java.lang.String</text>
                     <text x='5.000'
-                          y='157.000'>+ setValue(key:java.lang.String,value:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
+                          y='157.000'>+ getValue(key:java.lang.String):java.util.Optional&lt;org.tquadrat.foundation.inifile.internal.Value&gt;</text>
                     <text x='5.000'
-                          y='168.000'>+ toString():java.lang.String</text>
+                          y='168.000'>+ hashCode():int</text>
+                    <text x='5.000'
+                          y='179.000'>+ setValue(key:java.lang.String,value:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
+                    <text x='5.000'
+                          y='190.000'>+ toString():java.lang.String</text>
                 </g>
             </g>
         </symbol>
@@ -229,13 +233,74 @@
                 </g>
             </g>
         </symbol>
+        <clipPath id='ID000003'>
+            <rect class='externalClass'
+                  height='62.000'
+                  width='148.000'
+                  x='0.000'
+                  y='8.000'/>
+        </clipPath>
+        <symbol id='java.lang.Comparable'>
+            <g>
+                <g clip-path='url(#ID000003)'>
+                    <rect x='0.000'
+                          y='8.000'
+                          width='148.000'
+                          height='62.000'
+                          class='externalClass'/>
+                    <line x1='0.000'
+                          y1='36.000'
+                          x2='148.000'
+                          y2='36.000'
+                          class='separator'/>
+                    <text x='47.600'
+                          y='21.000'
+                          class='stereotype'>&#xAB;Interface&#xBB;</text>
+                    <text x='44.000'
+                          y='32.000'
+                          class='abstract'>Comparable</text>
+                    <line x1='0.000'
+                          y1='53.000'
+                          x2='148.000'
+                          y2='53.000'
+                          class='separator'/>
+                    <text x='5.000'
+                          y='49.000'/>
+                    <text x='5.000'
+                          y='66.000'
+                          class='abstract'>+ compareTo(arg0:T):int</text>
+                </g>
+                <g transform='translate(123.000 0.000)'>
+                    <rect x='0.000'
+                          y='1.000'
+                          width='50.000'
+                          height='17.000'
+                          class='template'/>
+                    <rect x='0.000'
+                          y='1.000'
+                          width='50.000'
+                          height='17.000'
+                          class='externalClass'
+                          stroke='none'
+                          stroke-opacity='0.0'/>
+                    <text x='5.000'
+                          y='14.000'>T</text>
+                </g>
+            </g>
+        </symbol>
     </defs>
     <path class='inheritance'
-          d='M336.000,297.000 L336.000,197.000'
+          d='M311.000,297.000 c0.000,-85.000,-143.000,0.000,-143.000,-85.000 v-15'
           marker-end='url(#inheritance)'/>
-    <use x='214.000'
+    <path class='implementation'
+          d='M361.000,297.000 c0.000,-187.000,130.500,0.000,130.500,-187.000 v-15'
+          marker-end='url(#implementation)'/>
+    <use x='46.000'
          y='25.000'
          xlink:href='#java.lang.Object'/>
+    <use x='417.500'
+         y='25.000'
+         xlink:href='#java.lang.Comparable'/>
     <use x='25.000'
          y='297.000'
          xlink:href='#org.tquadrat.foundation.inifile.internal.Group'/>

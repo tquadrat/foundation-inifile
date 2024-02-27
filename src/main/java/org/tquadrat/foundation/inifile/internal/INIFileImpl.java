@@ -25,7 +25,7 @@ import static java.nio.file.Files.readAllLines;
 import static java.nio.file.Files.writeString;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
 import static org.apiguardian.api.API.Status.INTERNAL;
@@ -41,7 +41,6 @@ import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.Collator;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -85,12 +84,6 @@ public final class INIFileImpl implements INIFile
      *  {@link Clock#systemDefaultZone()}.
      */
     private Clock m_Clock = Clock.systemDefaultZone();
-
-    /**
-     *  The collator the is used for sorting the groups and entries if
-     *  requested.
-     */
-    private final Collator m_Collator;
 
     /**
      *  The comment for this file.
@@ -158,7 +151,6 @@ public final class INIFileImpl implements INIFile
      */
     public INIFileImpl( final Path file )
     {
-        m_Collator = Collator.getInstance();
         m_File = file;
         m_LastUpdated = Instant.now( m_Clock );
     }   //  INIFileImpl()
@@ -383,17 +375,15 @@ public final class INIFileImpl implements INIFile
     public final Collection<Entry> listEntries()
     {
         final List<Entry> buffer = new ArrayList<>();
-        for( final var group : m_Groups.keySet() )
+        for( final var group : m_Groups.values() )
         {
-            @SuppressWarnings( "LocalVariableNamingConvention" )
-            final var g = m_Groups.get( group );
-            for( final var key : g.getKeys() )
+            for( final var key : group.getKeys() )
             {
-                final var value = g.getValue( key );
-                buffer.add( new Entry( group, key, value.map( Value::getValue ).orElse( null ) ) );
+                final var value = group.getValue( key );
+                buffer.add( new Entry( group.getName(), key, value.map( Value::getValue ).orElse( null ) ) );
             }
         }
-        buffer.sort( comparing( Entry::group, m_Collator ).thenComparing( Entry::key, m_Collator ) );
+        buffer.sort( naturalOrder() );
         final var retValue = List.copyOf( buffer );
 
         //---* Done *----------------------------------------------------------

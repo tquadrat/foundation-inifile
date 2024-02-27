@@ -17,6 +17,7 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.lang.Integer.signum;
 import static java.lang.String.format;
 import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
@@ -25,7 +26,7 @@ import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.hash;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
-import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
+import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
 
 import java.util.StringJoiner;
 
@@ -45,7 +46,7 @@ import org.tquadrat.foundation.lang.Objects;
 @SuppressWarnings( "NewClassNamingConvention" )
 @ClassVersion( sourceVersion = "$Id: Value.java 1062 2023-09-25 23:11:41Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
-public final class Value
+public final class Value implements Comparable<Value>
 {
         /*------------*\
     ====** Attributes **=======================================================
@@ -85,7 +86,7 @@ public final class Value
     public Value( final Group parent, final String key )
     {
         m_Group = requireNonNullArgument( parent, "parent" );
-        m_Key = requireNotEmptyArgument( key, "key" );
+        m_Key = requireNotBlankArgument( key, "key" );
     }   //  Value()
 
     /**
@@ -114,6 +115,23 @@ public final class Value
     {
         if( nonNull( comment ) ) m_Comment.append( comment );
     }   //  addComment()
+
+    /**
+     *  {@inheritDoc}
+     *
+     *  @since 0.4.3
+     */
+    @SuppressWarnings( "CompareToUsesNonFinalVariable" )
+    @Override
+    public int compareTo( final Value o )
+    {
+        var retValue = m_Group.compareTo( o.m_Group );
+        if( retValue == 0) retValue = signum( m_Key.compareTo( o.m_Key ) );
+        if( retValue == 0) retValue = signum( m_Value.compareTo( o.m_Value ) );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  compareTo()
 
     /**
      *  {@inheritDoc}

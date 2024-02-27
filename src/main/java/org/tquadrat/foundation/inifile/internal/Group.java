@@ -17,12 +17,15 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
+import static java.lang.Integer.signum;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
 import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
+import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
 
 import java.util.Collection;
@@ -32,7 +35,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.apiguardian.api.API;
 import org.tquadrat.foundation.annotation.ClassVersion;
@@ -49,7 +51,7 @@ import org.tquadrat.foundation.annotation.ClassVersion;
 @SuppressWarnings( "NewClassNamingConvention" )
 @ClassVersion( sourceVersion = "$Id: Group.java 1062 2023-09-25 23:11:41Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
-public final class Group
+public final class Group implements Comparable<Group>
 {
         /*------------*\
     ====** Attributes **=======================================================
@@ -80,7 +82,7 @@ public final class Group
      */
     public Group( final String name )
     {
-        m_Name = requireNotEmptyArgument( name, "name" );
+        m_Name = requireNotBlankArgument( name, "name" );
     }   //  Group()
 
         /*---------*\
@@ -113,6 +115,23 @@ public final class Group
     }   //  addComment()
 
     /**
+     *  {@inheritDoc}
+     *  <p>This method is different from
+     *  {@link #equals(Object) equals()}
+     *  as it does not consider the comment.</p>
+     *
+     *  @since 0.4.3
+     */
+    @Override
+    public final int compareTo( final Group o )
+    {
+        final var retValue = signum( m_Name.compareTo( o.m_Name ) );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  compareTo()
+
+    /**
      *  Creates a new instance of
      *  {@link Value}
      *  for the given name.
@@ -128,14 +147,13 @@ public final class Group
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings( "EqualsOnSuspiciousObject" )
     @Override
     public final boolean equals( final Object o )
     {
         var retValue = this == o;
         if( !retValue && o instanceof final Group other )
         {
-            retValue = m_Comment.equals( other.m_Comment )
+            retValue = m_Comment.toString().contentEquals( other.m_Comment )
                 && m_Name.equals( other.m_Name )
                 && m_Values.equals( other.m_Values );
         }
@@ -145,7 +163,7 @@ public final class Group
     }   //  equals()
 
     /**
-     *  Returns all key for this group.
+     *  Returns all keys for this group.
      *
      *  @return The keys.
      */
@@ -156,6 +174,13 @@ public final class Group
         //---* Done *----------------------------------------------------------
         return retValue;
     }   //  getKeys()
+
+    /**
+     *  Returns the name for this group.
+     *
+     *  @return The group's name.
+     */
+    public final String getName() { return m_Name; }
 
     /**
      *  Returns the value for the given key from this group.
@@ -213,7 +238,7 @@ public final class Group
         final var retValue = m_Values.values()
             .stream()
             .map( Value::toString )
-            .collect( Collectors.joining( EMPTY_STRING, joiner.toString(), EMPTY_STRING ) );
+            .collect( joining( EMPTY_STRING, joiner.toString(), EMPTY_STRING ) );
 
         //---* Done *----------------------------------------------------------
         return retValue;

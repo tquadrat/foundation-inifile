@@ -7,7 +7,7 @@
      version='1.1'
      baseProfile='full'
      width='564.000'
-     height='767.000'>
+     height='778.000'>
     <defs>
         <style><![CDATA[
             line
@@ -118,7 +118,7 @@
         </marker>
         <clipPath id='ID000001'>
             <rect class='focusClass'
-                  height='150.000'
+                  height='161.000'
                   width='514.000'
                   x='0.000'
                   y='0.000'/>
@@ -130,7 +130,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='514.000'
-                          height='150.000'
+                          height='161.000'
                           class='focusClass'/>
                     <line x1='0.000'
                           y1='17.000'
@@ -153,19 +153,21 @@
                     <text x='5.000'
                           y='69.000'>+ Entry(group:java.lang.String,key:java.lang.String,value:java.lang.String)</text>
                     <text x='5.000'
-                          y='80.000'>+ value(stringConverter:org.tquadrat.foundation.lang.StringConverter&lt;? extends T&gt;):T</text>
+                          y='80.000'>+ compareTo(o:org.tquadrat.foundation.inifile.INIFile.Entry):int</text>
                     <text x='5.000'
                           y='91.000'>+ toString():java.lang.String</text>
                     <text x='5.000'
-                          y='102.000'>+ hashCode():int</text>
+                          y='102.000'>+ value(stringConverter:org.tquadrat.foundation.lang.StringConverter&lt;? extends T&gt;):T</text>
                     <text x='5.000'
-                          y='113.000'>+ equals(o:java.lang.Object):boolean</text>
+                          y='113.000'>+ hashCode():int</text>
                     <text x='5.000'
-                          y='124.000'>+ group():java.lang.String</text>
+                          y='124.000'>+ equals(o:java.lang.Object):boolean</text>
                     <text x='5.000'
-                          y='135.000'>+ key():java.lang.String</text>
+                          y='135.000'>+ group():java.lang.String</text>
                     <text x='5.000'
-                          y='146.000'>+ value():java.lang.String</text>
+                          y='146.000'>+ key():java.lang.String</text>
+                    <text x='5.000'
+                          y='157.000'>+ value():java.lang.String</text>
                 </g>
             </g>
         </symbol>
@@ -218,6 +220,61 @@
         </symbol>
         <clipPath id='ID000003'>
             <rect class='externalClass'
+                  height='62.000'
+                  width='148.000'
+                  x='0.000'
+                  y='8.000'/>
+        </clipPath>
+        <symbol id='java.lang.Comparable'>
+            <g>
+                <g clip-path='url(#ID000003)'>
+                    <rect x='0.000'
+                          y='8.000'
+                          width='148.000'
+                          height='62.000'
+                          class='externalClass'/>
+                    <line x1='0.000'
+                          y1='36.000'
+                          x2='148.000'
+                          y2='36.000'
+                          class='separator'/>
+                    <text x='47.600'
+                          y='21.000'
+                          class='stereotype'>&#xAB;Interface&#xBB;</text>
+                    <text x='44.000'
+                          y='32.000'
+                          class='abstract'>Comparable</text>
+                    <line x1='0.000'
+                          y1='53.000'
+                          x2='148.000'
+                          y2='53.000'
+                          class='separator'/>
+                    <text x='5.000'
+                          y='49.000'/>
+                    <text x='5.000'
+                          y='66.000'
+                          class='abstract'>+ compareTo(arg0:T):int</text>
+                </g>
+                <g transform='translate(123.000 0.000)'>
+                    <rect x='0.000'
+                          y='1.000'
+                          width='50.000'
+                          height='17.000'
+                          class='template'/>
+                    <rect x='0.000'
+                          y='1.000'
+                          width='50.000'
+                          height='17.000'
+                          class='externalClass'
+                          stroke='none'
+                          stroke-opacity='0.0'/>
+                    <text x='5.000'
+                          y='14.000'>T</text>
+                </g>
+            </g>
+        </symbol>
+        <clipPath id='ID000004'>
+            <rect class='externalClass'
                   height='172.000'
                   width='244.000'
                   x='0.000'
@@ -225,7 +282,7 @@
         </clipPath>
         <symbol id='java.lang.Object'>
             <g>
-                <g clip-path='url(#ID000003)'>
+                <g clip-path='url(#ID000004)'>
                     <rect x='0.000'
                           y='0.000'
                           width='244.000'
@@ -274,12 +331,18 @@
         </symbol>
     </defs>
     <path class='inheritance'
-          d='M282.000,492.000 L282.000,392.000'
+          d='M307.000,492.000 c0.000,-85.000,-25.000,0.000,-25.000,-85.000 v-15'
           marker-end='url(#inheritance)'/>
+    <path class='implementation'
+          d='M257.000,492.000 c0.000,-382.000,-128.500,0.000,-128.500,-382.000 v-15'
+          marker-end='url(#implementation)'/>
     <path class='inheritance'
-          d='M282.000,297.000 L282.000,197.000'
+          d='M282.000,297.000 c0.000,-85.000,141.000,0.000,141.000,-85.000 v-15'
           marker-end='url(#inheritance)'/>
-    <use x='160.000'
+    <use x='54.500'
+         y='25.000'
+         xlink:href='#java.lang.Comparable'/>
+    <use x='301.000'
          y='25.000'
          xlink:href='#java.lang.Object'/>
     <use x='160.000'

@@ -21,12 +21,14 @@ import static java.lang.Integer.signum;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 import static org.apiguardian.api.API.Status.INTERNAL;
+import static org.apiguardian.api.API.Status.MAINTAINED;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
+import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
 import java.util.Collection;
 import java.util.Map;
@@ -43,13 +45,13 @@ import org.tquadrat.foundation.annotation.ClassVersion;
  *  The group for an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Group.java 1062 2023-09-25 23:11:41Z tquadrat $
+ *  @version $Id: Group.java 1104 2024-02-27 14:48:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
 @SuppressWarnings( "NewClassNamingConvention" )
-@ClassVersion( sourceVersion = "$Id: Group.java 1062 2023-09-25 23:11:41Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: Group.java 1104 2024-02-27 14:48:06Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class Group implements Comparable<Group>
 {
@@ -95,7 +97,7 @@ public final class Group implements Comparable<Group>
      */
     public final void addComment( final String comment )
     {
-        if( nonNull( comment ) ) m_Comment.append( comment );
+        if( isNotEmptyOrBlank( comment ) ) m_Comment.append( comment );
     }   //  addComment()
 
     /**
@@ -120,9 +122,10 @@ public final class Group implements Comparable<Group>
      *  {@link #equals(Object) equals()}
      *  as it does not consider the comment.</p>
      *
-     *  @since 0.4.3
+     *  @since 0.4.2
      */
     @Override
+    @API( status = MAINTAINED, since = "0.4.2" )
     public final int compareTo( final Group o )
     {
         final var retValue = signum( m_Name.compareTo( o.m_Name ) );
@@ -203,6 +206,37 @@ public final class Group implements Comparable<Group>
      */
     @Override
     public final int hashCode() { return Objects.hash( m_Comment, m_Name, m_Values ); }
+
+    /**
+     *  <p>{@summary Sets a comment to the group.}</p>
+     *  <p>Any previously existing comment will be overwritten.</p>
+     *
+     *  @param  comment The comment.
+     *
+     *  @since 0.4.2
+     */
+    @API( status = INTERNAL, since = "0.4.3" )
+    public final void setComment( final String comment )
+    {
+        m_Comment.setLength( 0 );
+        addComment( comment );
+    }   //  setComment()
+
+    /**
+     *  <p>{@summary Sets a comment to the value with the given key.}</p>
+     *  <p>Any previously existing comment will be overwritten.</p>
+     *
+     *  @param  key The key.
+     *  @param  comment The comment.
+     *
+     *  @since 0.4.2
+     */
+    @API( status = INTERNAL, since = "0.4.3" )
+    public final void setComment( final String key, final String comment )
+    {
+        final var value = m_Values.computeIfAbsent( requireNotBlankArgument( key, "key" ), this::createValue );
+        value.setComment( comment );
+    }   //  setComment()
 
     /**
      *  Sets the given value for the given key.

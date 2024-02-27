@@ -7,7 +7,7 @@
      version='1.1'
      baseProfile='full'
      width='1260.000'
-     height='858.000'>
+     height='924.000'>
     <defs>
         <style><![CDATA[
             line
@@ -118,7 +118,7 @@
         </marker>
         <clipPath id='ID000001'>
             <rect class='focusClass'
-                  height='359.000'
+                  height='392.000'
                   width='916.000'
                   x='0.000'
                   y='0.000'/>
@@ -130,7 +130,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='916.000'
-                          height='359.000'
+                          height='392.000'
                           class='focusClass'/>
                     <line x1='0.000'
                           y1='17.000'
@@ -200,12 +200,18 @@
                     <text x='5.000'
                           y='322.000'>+ setClock(clock:java.time.Clock):void</text>
                     <text x='5.000'
-                          y='333.000'>+ setValue(group:java.lang.String,key:java.lang.String,value:java.lang.String):void</text>
+                          y='333.000'>+ setComment(comment:java.lang.String):void</text>
                     <text x='5.000'
-                          y='344.000'
+                          y='344.000'>+ setComment(group:java.lang.String,comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='355.000'>+ setComment(group:java.lang.String,key:java.lang.String,comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='366.000'>+ setValue(group:java.lang.String,key:java.lang.String,value:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='377.000'
                           class='static'>+ splitComment(comment:java.lang.CharSequence):java.util.Collection&lt;java.lang.String&gt;</text>
                     <text x='5.000'
-                          y='355.000'>+ toString():java.lang.String</text>
+                          y='388.000'>+ toString():java.lang.String</text>
                 </g>
             </g>
         </symbol>
@@ -267,7 +273,7 @@
         </symbol>
         <clipPath id='ID000003'>
             <rect class='otherClass'
-                  height='249.000'
+                  height='282.000'
                   width='916.000'
                   x='0.000'
                   y='0.000'/>
@@ -278,7 +284,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='916.000'
-                          height='249.000'
+                          height='282.000'
                           class='otherClass'/>
                     <line x1='0.000'
                           y1='28.000'
@@ -344,18 +350,27 @@
                           class='abstract'>+ save():void</text>
                     <text x='5.000'
                           y='234.000'
+                          class='abstract'>+ setComment(comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='245.000'
+                          class='abstract'>+ setComment(group:java.lang.String,comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='256.000'
+                          class='abstract'>+ setComment(group:java.lang.String,key:java.lang.String,comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='267.000'
                           class='abstract'>+ setValue(group:java.lang.String,key:java.lang.String,value:java.lang.String):void</text>
                     <text x='5.000'
-                          y='245.000'>&#x2A22; setValue(group:java.lang.String,key:java.lang.String,value:S,stringConverter:org.tquadrat.foundation.lang.StringConverter&lt;S&gt;):void</text>
+                          y='278.000'>&#x2A22; setValue(group:java.lang.String,key:java.lang.String,value:S,stringConverter:org.tquadrat.foundation.lang.StringConverter&lt;S&gt;):void</text>
                 </g>
             </g>
         </symbol>
     </defs>
     <path class='inheritance'
-          d='M605.000,374.000 c0.000,-162.000,-458.000,0.000,-458.000,-162.000 v-15'
+          d='M605.000,407.000 c0.000,-195.000,-458.000,0.000,-458.000,-195.000 v-15'
           marker-end='url(#inheritance)'/>
     <path class='implementation'
-          d='M655.000,374.000 c0.000,-85.000,122.000,0.000,122.000,-85.000 v-15'
+          d='M655.000,407.000 c0.000,-85.000,122.000,0.000,122.000,-85.000 v-15'
           marker-end='url(#implementation)'/>
     <use x='25.000'
          y='25.000'
@@ -364,6 +379,6 @@
          y='25.000'
          xlink:href='#org.tquadrat.foundation.inifile.INIFile'/>
     <use x='172.000'
-         y='374.000'
+         y='407.000'
          xlink:href='#org.tquadrat.foundation.inifile.internal.INIFileImpl'/>
 </svg>

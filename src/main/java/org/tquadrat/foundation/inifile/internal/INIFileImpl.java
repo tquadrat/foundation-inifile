@@ -29,11 +29,13 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
 import static org.apiguardian.api.API.Status.INTERNAL;
+import static org.apiguardian.api.API.Status.STABLE;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.CommonConstants.UTF8;
 import static org.tquadrat.foundation.lang.Objects.isNull;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
+import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
 import static org.tquadrat.foundation.util.StringUtils.breakText;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmpty;
@@ -66,12 +68,12 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 1062 2023-09-25 23:11:41Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1104 2024-02-27 14:48:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1062 2023-09-25 23:11:41Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1104 2024-02-27 14:48:06Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
@@ -173,11 +175,11 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void addComment( final String group, final String comment )
     {
-        requireNotEmptyArgument( group, "group" );
+        requireNotBlankArgument( group, "group" );
         if( isNotEmptyOrBlank( comment ) )
         {
             @SuppressWarnings( "LocalVariableNamingConvention" )
-            final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
+            final var g = m_Groups.computeIfAbsent( group, this::createGroup );
             g.addComment( comment );
         }
     }   //  addComment()
@@ -188,12 +190,12 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void addComment( final String group, final String key, final String comment )
     {
-        requireNotEmptyArgument( group, "group" );
-        requireNotEmptyArgument( key, "key" );
+        requireNotBlankArgument( group, "group" );
+        requireNotBlankArgument( key, "key" );
         if( isNotEmptyOrBlank( comment ) )
         {
             @SuppressWarnings( "LocalVariableNamingConvention" )
-            final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
+            final var g = m_Groups.computeIfAbsent( group, this::createGroup );
             g.addComment( key, comment );
         }
     }   //  addComment()
@@ -532,6 +534,45 @@ public final class INIFileImpl implements INIFile
         m_Clock = requireNonNullArgument( clock, "clock" );
         m_LastUpdated = Instant.now( clock );
     }   //  setClock()
+
+    /**
+     * {@inheritDoc}
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    @Override
+    public final void setComment( final String comment )
+    {
+        m_Comment.setLength( 0 );
+        addComment( comment );
+    }   //  setComment()
+
+    /**
+     * {@inheritDoc}
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    @Override
+    public final void setComment( final String group, final String comment )
+    {
+        final var g = m_Groups.computeIfAbsent( requireNotBlankArgument( group, "group" ), this::createGroup );
+        g.setComment( comment );
+    }   //  setComment()
+
+    /**
+     * {@inheritDoc}
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    @Override
+    public final void setComment( final String group, final String key, final String comment )
+    {
+        final var g = m_Groups.computeIfAbsent( requireNotBlankArgument( group, "group" ), this::createGroup );
+        g.setComment( requireNotBlankArgument( key, "key" ), comment );
+    }   //  setComment()
 
     /**
      *  {@inheritDoc}

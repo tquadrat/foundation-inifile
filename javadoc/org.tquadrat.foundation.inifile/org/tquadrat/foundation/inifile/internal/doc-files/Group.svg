@@ -7,7 +7,7 @@
      version='1.1'
      baseProfile='full'
      width='672.000'
-     height='616.000'>
+     height='638.000'>
     <defs>
         <style><![CDATA[
             line
@@ -118,7 +118,7 @@
         </marker>
         <clipPath id='ID000001'>
             <rect class='focusClass'
-                  height='194.000'
+                  height='216.000'
                   width='622.000'
                   x='0.000'
                   y='0.000'/>
@@ -130,7 +130,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='622.000'
-                          height='194.000'
+                          height='216.000'
                           class='focusClass'/>
                     <line x1='0.000'
                           y1='17.000'
@@ -171,9 +171,13 @@
                     <text x='5.000'
                           y='168.000'>+ hashCode():int</text>
                     <text x='5.000'
-                          y='179.000'>+ setValue(key:java.lang.String,value:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
+                          y='179.000'>+ setComment(comment:java.lang.String):void</text>
                     <text x='5.000'
-                          y='190.000'>+ toString():java.lang.String</text>
+                          y='190.000'>+ setComment(key:java.lang.String,comment:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='201.000'>+ setValue(key:java.lang.String,value:java.lang.String):org.tquadrat.foundation.inifile.internal.Value</text>
+                    <text x='5.000'
+                          y='212.000'>+ toString():java.lang.String</text>
                 </g>
             </g>
         </symbol>

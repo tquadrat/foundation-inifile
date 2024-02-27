@@ -41,12 +41,12 @@ import org.tquadrat.foundation.lang.StringConverter;
  *  @note   Changes will not be persisted automatically!
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFile.java 1078 2023-10-19 14:39:47Z tquadrat $
+ *  @version $Id: INIFile.java 1104 2024-02-27 14:48:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFile.java 1078 2023-10-19 14:39:47Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFile.java 1104 2024-02-27 14:48:06Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 public sealed interface INIFile
     permits org.tquadrat.foundation.inifile.internal.INIFileImpl
@@ -58,7 +58,7 @@ public sealed interface INIFile
      *  An entry for the INI file.
      *
      *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
-     *  @version $Id: INIFile.java 1078 2023-10-19 14:39:47Z tquadrat $
+     *  @version $Id: INIFile.java 1104 2024-02-27 14:48:06Z tquadrat $
      *
      *  @param  group   The group for the entry.
      *  @param  key The key for the entry.
@@ -76,9 +76,10 @@ public sealed interface INIFile
         /**
          *  {@inheritDoc}
          *
-         *  @since 0.4.3
+         *  @since 0.4.2
          */
         @Override
+        @API( status = STABLE, since = "0.4.2" )
         public int compareTo( final Entry o )
         {
             final Supplier<String> emptyString = () -> EMPTY_STRING;
@@ -309,6 +310,43 @@ public sealed interface INIFile
      *      the file.
      */
     public void save() throws IOException;
+
+    /**
+     *  <p>{@summary Sets the given comment to the INI file.}</p>
+     *  <p>The new comment will replace any already existing comment.</p>
+     *
+     *  @param  comment The comment.
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    public void setComment( final String comment );
+
+    /**
+     *  <p>{@summary Sets the given comment to the given group.}</p>
+     *  <p>The new comment will replace any already existing comment.</p>
+     *
+     *  @param  group   The group.
+     *  @param  comment The comment.
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    public void setComment( final String group, final String comment );
+
+    /**
+     *  <p>{@summary Sets the given comment to the value that is identified by
+     *  the given group and key.}</p>
+     *  <p>The new comment will replace any already existing comment.</p>
+     *
+     *  @param  group   The group.
+     *  @param  key The key for the value.
+     *  @param  comment The comment.
+     *
+     *  @since 0.4.3
+     */
+    @API( status = STABLE, since = "0.4.3" )
+    public void setComment( final String group, final String key, final String comment );
 
     /**
      *  Stores the given value with the given key to the given group.

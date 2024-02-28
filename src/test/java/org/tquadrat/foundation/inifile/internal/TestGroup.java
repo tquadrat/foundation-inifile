@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -17,21 +17,24 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
-import static java.lang.String.format;
-import static java.lang.System.out;
 import static org.apiguardian.api.API.Status.STABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
+
+import java.util.stream.Stream;
 
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.tquadrat.foundation.annotation.ClassVersion;
+import org.tquadrat.foundation.exception.BlankArgumentException;
 import org.tquadrat.foundation.exception.EmptyArgumentException;
 import org.tquadrat.foundation.exception.NullArgumentException;
+import org.tquadrat.foundation.exception.ValidationException;
 import org.tquadrat.foundation.testutil.TestBaseClass;
 
 /**
@@ -48,6 +51,19 @@ public class TestGroup extends TestBaseClass
         /*---------*\
     ====** Methods **==========================================================
         \*---------*/
+    /**
+     *  Returns a series of invalid names.
+     *
+     *  @return The invalid name.
+     */
+    public static final Stream<String> invalidNameFactory()
+    {
+        final var retValue = Stream.of( "]name", "n]ame", "name]", "name\n", "\nname", "n\name", "name\t", "\tname", "n\tame" );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  invalidNameFactory()
+
     /**
      *  Test for the constructors of
      *  {@link Group}.
@@ -70,60 +86,30 @@ public class TestGroup extends TestBaseClass
      *  @throws Exception   Something went wrong unexpectedly.
      */
     @Test
-    final void testConstructorWithEmptyArgument() throws Exception
+    final void testConstructorWithInvalidArgument() throws Exception
     {
         skipThreadTest();
 
-        final Class<? extends Throwable> expectedException = EmptyArgumentException.class;
-        try
-        {
-            final var candidate = new Group( EMPTY_STRING );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
+        assertThrows( NullArgumentException.class, () -> new Group( null ) );
+        assertThrows( EmptyArgumentException.class, () -> new Group( EMPTY_STRING ) );
+        assertThrows( BlankArgumentException.class, () -> new Group( " " ) );
     }   //  testConstructorWithEmptyArgument()
 
     /**
      *  Test for the constructors of
      *  {@link Group}.
      *
+     *  @param  name    The name candidate.
      *  @throws Exception   Something went wrong unexpectedly.
      */
-    @Test
-    final void testConstructorWithNullArgument() throws Exception
+    @ParameterizedTest
+    @MethodSource( "invalidNameFactory" )
+    final void testConstructorWithInvalidArgument( final String name ) throws Exception
     {
         skipThreadTest();
 
-        final Class<? extends Throwable> expectedException = NullArgumentException.class;
-        try
-        {
-            final var candidate = new Group( null );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-    }   //  testConstructorWithNullArgument()
+        assertThrows( ValidationException.class, () -> new Group( name ) );
+    }   //  testConstructorWithEmptyArgument()
 
     /**
      *  Tests for

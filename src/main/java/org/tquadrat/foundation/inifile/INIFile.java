@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2023 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -46,6 +46,7 @@ import org.tquadrat.foundation.lang.StringConverter;
  *  @UMLGraph.link
  *  @since 0.1.0
  */
+@SuppressWarnings( "ClassWithTooManyMethods" )
 @ClassVersion( sourceVersion = "$Id: INIFile.java 1104 2024-02-27 14:48:06Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 public sealed interface INIFile
@@ -231,7 +232,10 @@ public sealed interface INIFile
     }   //  getValue()
 
     /**
-     *  Checks whether the INI file contains a group with the given name.
+     *  <p>{@summary Checks whether the INI file contains a group with the
+     *  given name.}</p>
+     *  <p>This method will not throw an exception for an invalid group name;
+     *  instead it returns {@code false}.</p>
      *
      *  @param  group   The group.
      *  @return {@code true} if there is a group with the given name,
@@ -241,7 +245,10 @@ public sealed interface INIFile
     public boolean hasGroup( final String group );
 
     /**
-     *  Checks whether the INI file contains an entry with the given key.
+     *  <p>{@summary Checks whether the INI file contains an entry with the
+     *  given key.}</p>
+     *  <p>This method will not throw an exception for an invalid group name or
+     *  an invalid key; instead it returns {@code false}.</p>
      *
      *  @param  group   The group.
      *  @param  key The key.

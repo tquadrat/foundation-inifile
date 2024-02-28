@@ -7,7 +7,7 @@
      version='1.1'
      baseProfile='full'
      width='696.000'
-     height='605.000'>
+     height='616.000'>
     <defs>
         <style><![CDATA[
             line
@@ -118,7 +118,7 @@
         </marker>
         <clipPath id='ID000001'>
             <rect class='focusClass'
-                  height='183.000'
+                  height='194.000'
                   width='646.000'
                   x='0.000'
                   y='0.000'/>
@@ -130,7 +130,7 @@
                     <rect x='0.000'
                           y='0.000'
                           width='646.000'
-                          height='183.000'
+                          height='194.000'
                           class='focusClass'/>
                     <line x1='0.000'
                           y1='17.000'
@@ -158,19 +158,22 @@
                     <text x='5.000'
                           y='102.000'>+ addComment(comment:java.lang.String):void</text>
                     <text x='5.000'
-                          y='113.000'>+ compareTo(o:org.tquadrat.foundation.inifile.internal.Value):int</text>
+                          y='113.000'
+                          class='static'>+ checkKeyCandidate(candidate:java.lang.String):boolean</text>
                     <text x='5.000'
-                          y='124.000'>+ equals(o:java.lang.Object):boolean</text>
+                          y='124.000'>+ compareTo(o:org.tquadrat.foundation.inifile.internal.Value):int</text>
                     <text x='5.000'
-                          y='135.000'>+ getValue():java.lang.String</text>
+                          y='135.000'>+ equals(o:java.lang.Object):boolean</text>
                     <text x='5.000'
-                          y='146.000'>+ hashCode():int</text>
+                          y='146.000'>+ getValue():java.lang.String</text>
                     <text x='5.000'
-                          y='157.000'>+ setComment(comment:java.lang.String):void</text>
+                          y='157.000'>+ hashCode():int</text>
                     <text x='5.000'
-                          y='168.000'>+ setValue(value:java.lang.String):void</text>
+                          y='168.000'>+ setComment(comment:java.lang.String):void</text>
                     <text x='5.000'
-                          y='179.000'>+ toString():java.lang.String</text>
+                          y='179.000'>+ setValue(value:java.lang.String):void</text>
+                    <text x='5.000'
+                          y='190.000'>+ toString():java.lang.String</text>
                 </g>
             </g>
         </symbol>

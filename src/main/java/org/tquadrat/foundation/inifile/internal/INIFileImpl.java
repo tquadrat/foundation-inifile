@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2023 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -30,15 +30,15 @@ import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
 import static org.apiguardian.api.API.Status.INTERNAL;
 import static org.apiguardian.api.API.Status.STABLE;
+import static org.tquadrat.foundation.inifile.internal.Group.checkGroupNameCandidate;
+import static org.tquadrat.foundation.inifile.internal.Value.checkKeyCandidate;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.CommonConstants.UTF8;
 import static org.tquadrat.foundation.lang.Objects.isNull;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
-import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
-import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
+import static org.tquadrat.foundation.lang.Objects.requireValidArgument;
 import static org.tquadrat.foundation.util.StringUtils.breakText;
-import static org.tquadrat.foundation.util.StringUtils.isNotEmpty;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
 import java.io.IOException;
@@ -147,7 +147,7 @@ public final class INIFileImpl implements INIFile
      *  {@link #create(Path)}
      *  and
      *  {@link #open(Path)}.</p>
-     *  <p>But this allows simpler tests.</p>
+     *  <p>But that this constructor is public allows simpler tests.</p>
      *
      *  @param  file    The file that holds the contents.
      */
@@ -175,7 +175,7 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void addComment( final String group, final String comment )
     {
-        requireNotBlankArgument( group, "group" );
+        requireValidArgument( group, "group", Group::checkGroupNameCandidate );
         if( isNotEmptyOrBlank( comment ) )
         {
             @SuppressWarnings( "LocalVariableNamingConvention" )
@@ -190,8 +190,8 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void addComment( final String group, final String key, final String comment )
     {
-        requireNotBlankArgument( group, "group" );
-        requireNotBlankArgument( key, "key" );
+        requireValidArgument( group, "group", Group::checkGroupNameCandidate );
+        requireValidArgument( key, "key", Value::checkKeyCandidate );
         if( isNotEmptyOrBlank( comment ) )
         {
             @SuppressWarnings( "LocalVariableNamingConvention" )
@@ -201,10 +201,10 @@ public final class INIFileImpl implements INIFile
     }   //  addComment()
 
     /**
-     *  Breaks the given String into chunks of
+     *  <p>{@summary Breaks the given String into chunks of
      *  {@value #LINE_LENGTH}
-     *  characters. All but the last chunk will end with a backslash
-     *  (&quot;\&quot;).
+     *  characters.} All but the last chunk will end with a backslash
+     *  (&quot;\&quot;).</p>
      *
      *  @param  s   The String to split.
      *  @return The stream with the chunks.
@@ -254,7 +254,10 @@ public final class INIFileImpl implements INIFile
      */
     private final Group createGroup( final String group )
     {
-        return new Group( requireNotEmptyArgument( group, "group" ) );
+        /*
+         * The argument check will be done by the constructor itself.
+         */
+        return new Group( group );
     }   //  createGroup()
 
     /**
@@ -287,15 +290,12 @@ public final class INIFileImpl implements INIFile
     public final Optional<String> getValue( final String group, final String key )
     {
         Optional<String> retValue = Optional.empty();
-        if( isNotEmpty( group ) )
+        @SuppressWarnings( "LocalVariableNamingConvention" )
+        final var g = m_Groups.get( requireValidArgument( group, "group", Group::checkGroupNameCandidate ) );
+        if( nonNull( g ) )
         {
-            @SuppressWarnings( "LocalVariableNamingConvention" )
-            final var g = m_Groups.get( group );
-            if( nonNull( g ) )
-            {
-                retValue = g.getValue( key )
-                    .map( Value::getValue );
-            }
+            retValue = g.getValue( key )
+                .map( Value::getValue );
         }
 
         //---* Done *----------------------------------------------------------
@@ -322,7 +322,7 @@ public final class INIFileImpl implements INIFile
     @Override
     public final boolean hasGroup( final String group )
     {
-        return isNotEmptyOrBlank( group ) && m_Groups.containsKey( group );
+        return isNotEmptyOrBlank( group ) && checkGroupNameCandidate( group ) && m_Groups.containsKey( group );
     }   //  hasGroup()
 
     /**
@@ -331,7 +331,14 @@ public final class INIFileImpl implements INIFile
     @Override
     public final boolean hasValue( final String group, final String key )
     {
-        return getValue( group, key ).isPresent();
+        final var retValue = isNotEmptyOrBlank( group )
+            && isNotEmptyOrBlank( key )
+            && checkGroupNameCandidate( group )
+            && checkKeyCandidate( key )
+            && getValue( group, key ).isPresent();
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
     }   //  hasValue()
 
     /**
@@ -557,7 +564,8 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void setComment( final String group, final String comment )
     {
-        final var g = m_Groups.computeIfAbsent( requireNotBlankArgument( group, "group" ), this::createGroup );
+        @SuppressWarnings( "LocalVariableNamingConvention" )
+        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );
         g.setComment( comment );
     }   //  setComment()
 
@@ -570,8 +578,9 @@ public final class INIFileImpl implements INIFile
     @Override
     public final void setComment( final String group, final String key, final String comment )
     {
-        final var g = m_Groups.computeIfAbsent( requireNotBlankArgument( group, "group" ), this::createGroup );
-        g.setComment( requireNotBlankArgument( key, "key" ), comment );
+        @SuppressWarnings( "LocalVariableNamingConvention" )
+        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );
+        g.setComment( requireValidArgument( key, "key", Value::checkKeyCandidate ), comment );
     }   //  setComment()
 
     /**
@@ -581,7 +590,7 @@ public final class INIFileImpl implements INIFile
     public final void setValue( final String group, final String key, final String value )
     {
         @SuppressWarnings( "LocalVariableNamingConvention" )
-        final var g = m_Groups.computeIfAbsent( requireNotEmptyArgument( group, "group" ), this::createGroup );
+        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );
         g.setValue( key, value );
     }   //  setValue()
 

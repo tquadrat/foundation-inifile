@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -17,21 +17,24 @@
 
 package org.tquadrat.foundation.inifile.internal;
 
-import static java.lang.String.format;
-import static java.lang.System.out;
 import static org.apiguardian.api.API.Status.STABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
+
+import java.util.stream.Stream;
 
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.tquadrat.foundation.annotation.ClassVersion;
+import org.tquadrat.foundation.exception.BlankArgumentException;
 import org.tquadrat.foundation.exception.EmptyArgumentException;
 import org.tquadrat.foundation.exception.NullArgumentException;
+import org.tquadrat.foundation.exception.ValidationException;
 import org.tquadrat.foundation.testutil.TestBaseClass;
 
 /**
@@ -48,6 +51,19 @@ public class TestValue extends TestBaseClass
         /*---------*\
     ====** Methods **==========================================================
         \*---------*/
+    /**
+     *  Returns a series of invalid keys.
+     *
+     *  @return The invalid key.
+     */
+    public static final Stream<String> invalidKeyFactory()
+    {
+        final var retValue = Stream.of( "#key", "[key", "=key", "k=ey", "key=", "key\n", "\nkey", "k\ney", "key\t", "\tkey", "k\tey" );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  invalidKeyFactory()
+
     /**
      *  Test for the constructors of
      *  {@link Value}.
@@ -79,146 +95,39 @@ public class TestValue extends TestBaseClass
      *  @throws Exception   Something went wrong unexpectedly.
      */
     @Test
-    final void testConstructorWithEmptyArgument() throws Exception
+    final void testConstructorWithInvalidArgument() throws Exception
     {
         skipThreadTest();
 
         final var group = new Group( "name" );
-        final var key = EMPTY_STRING;
-        final String value = null;
+        final var key = "key";
+        final var value = "value";
 
-        Value candidate;
+        assertThrows( NullArgumentException.class, () -> new Value( null, key, value ) );
 
-        final Class<? extends Throwable> expectedException = EmptyArgumentException.class;
-        try
-        {
-            candidate = new Value( group, key );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-        try
-        {
-            candidate = new Value( group, key, value );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-    }   //  testConstructorWithEmptyArgument()
+        assertThrows( NullArgumentException.class, () -> new Value( group, null, value ) );
+        assertThrows( EmptyArgumentException.class, () -> new Value( group, EMPTY_STRING, value ) );
+        assertThrows( BlankArgumentException.class, () -> new Value( group, " ", value ) );
+    }   //  testConstructorWithInvalidArgument()
 
     /**
      *  Test for the constructors of
      *  {@link Value}.
      *
+     *  @param  key The candidate key.
      *  @throws Exception   Something went wrong unexpectedly.
      */
-    @Test
-    final void testConstructorWithNullArgument() throws Exception
+    @ParameterizedTest
+    @MethodSource( "invalidKeyFactory" )
+    final void testConstructorWithInvalidArgument( final String key ) throws Exception
     {
         skipThreadTest();
 
-        final String value = null;
+        final var group = new Group( "name" );
+        final var value = "value";
 
-        Group group;
-        String key;
-        Value candidate;
-
-        final Class<? extends Throwable> expectedException = NullArgumentException.class;
-
-        group = null;
-        key = "key";
-        try
-        {
-            candidate = new Value( group, key );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-        try
-        {
-            candidate = new Value( group, key, value );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-
-        group = new Group( "name" );
-        key = null;
-        try
-        {
-            candidate = new Value( group, key );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-        try
-        {
-            candidate = new Value( group, key, value );
-            assertNotNull( candidate );
-            fail( () -> format( MSG_ExceptionNotThrown, expectedException.getName() ) );
-        }
-        catch( final AssertionError e )
-        {
-            throw e;
-        }
-        catch( final Throwable t )
-        {
-            final var isExpectedException = expectedException.isInstance( t );
-            if( !isExpectedException )
-            { t.printStackTrace( out ); }
-            assertTrue( isExpectedException, () -> format( MSG_WrongExceptionThrown, expectedException.getName(), t.getClass().getName() ) );
-        }
-    }   //  testConstructorWithNullArgument()
+        assertThrows( ValidationException.class, () -> new Value( group, key, value ) );
+    }   //  testConstructorWithInvalidArgument()
 
     /**
      *  Tests for

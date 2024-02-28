@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2023 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -28,9 +28,11 @@ import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.hash;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
+import static org.tquadrat.foundation.lang.Objects.requireValidArgument;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
 import java.util.StringJoiner;
+import java.util.function.Predicate;
 
 import org.apiguardian.api.API;
 import org.tquadrat.foundation.annotation.ClassVersion;
@@ -88,7 +90,7 @@ public final class Value implements Comparable<Value>
     public Value( final Group parent, final String key )
     {
         m_Group = requireNonNullArgument( parent, "parent" );
-        m_Key = requireNotBlankArgument( key, "key" );
+        m_Key = requireValidArgument( key, "key", Value::checkKeyCandidate );
     }   //  Value()
 
     /**
@@ -117,6 +119,44 @@ public final class Value implements Comparable<Value>
     {
         if( isNotEmptyOrBlank( comment ) ) m_Comment.append( comment );
     }   //  addComment()
+
+    /**
+     *  <p>{@summary An implementation of
+     *  {@link Predicate }
+     *  to be used with
+     *  {@link org.tquadrat.foundation.lang.Objects#requireValidArgument(Object,String,Predicate)}
+     *  when checking the keys for new values.}</p>
+     *  <p>The candidate may not begin with a hash symbol ('#') or an opening
+     *  bracket ('['), and it may not contain newline characters, tab
+     *  characters or equal signs.</p>
+     *  <p>You should avoid hash symbols and opening brackets completely, even
+     *  inside or at the end of the key, as well as closing brackets (']'),
+     *  despite they are technically valid.</p>
+     *
+     *  @param  candidate   The key to check.
+     *  @return {@code true} if the value is a valid key, {@code false}
+     *      otherwise.
+     *  @throws org.tquadrat.foundation.exception.NullArgumentException The
+     *      candidate is {@code null}.
+     *  @throws org.tquadrat.foundation.exception.EmptyArgumentException    The
+     *      candidate is the empty string.
+     *  @throws org.tquadrat.foundation.exception.BlankArgumentException    The
+     *      candidate consists of whitespace only.
+     *
+     *  @since 0.4.4
+     */
+    @API( status = INTERNAL, since = "0.4.4" )
+    public static final boolean checkKeyCandidate( final String candidate )
+    {
+        var retValue = requireNotBlankArgument( candidate, "candidate" ).indexOf( '=' ) < 0;
+        if( retValue ) retValue = candidate.indexOf( '\n' ) < 0;
+        if( retValue ) retValue = candidate.indexOf( '\t' ) < 0;
+        if( retValue ) retValue = !candidate.trim().startsWith( "#" );
+        if( retValue ) retValue = !candidate.trim().startsWith( "[" );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  checkKeyCandidate()
 
     /**
      *  {@inheritDoc}

@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2023 by Thomas Thrien.
+ *  Copyright © 2002-2024 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -27,7 +27,7 @@ import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.nonNull;
 import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
-import static org.tquadrat.foundation.lang.Objects.requireNotEmptyArgument;
+import static org.tquadrat.foundation.lang.Objects.requireValidArgument;
 import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;
 
 import java.util.Collection;
@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 import org.apiguardian.api.API;
 import org.tquadrat.foundation.annotation.ClassVersion;
@@ -84,7 +85,7 @@ public final class Group implements Comparable<Group>
      */
     public Group( final String name )
     {
-        m_Name = requireNotBlankArgument( name, "name" );
+        m_Name = requireValidArgument( name, "name", Group::checkGroupNameCandidate );
     }   //  Group()
 
         /*---------*\
@@ -108,13 +109,46 @@ public final class Group implements Comparable<Group>
      */
     public final void addComment( final String key, final String comment )
     {
-        requireNotEmptyArgument( key, "key" );
+        requireValidArgument( key, "key", Value::checkKeyCandidate );
         if( nonNull( comment ) )
         {
-            m_Values.computeIfAbsent( requireNotEmptyArgument( key, "key" ), this::createValue )
+            m_Values.computeIfAbsent( key, this::createValue )
                 .addComment( comment );
         }
     }   //  addComment()
+
+    /**
+     *  <p>{@summary An implementation of
+     *  {@link Predicate }
+     *  to be used with
+     *  {@link org.tquadrat.foundation.lang.Objects#requireValidArgument(Object,String,Predicate)}
+     *  when checking the names for new groups.}</p>
+     *  <p>The candidate may not contain newline characters, tab characters or
+     *  closing brackets (']').</p>
+     *  <p>You should avoid equal signs ('='), hash signs ('#') and opening
+     *  brackets ('['), too, although they are technically allowed.</p>
+     *
+     *  @param  candidate   The key or name to check.
+     *  @return {@code true} if the value is a valid name or key.
+     *  @throws org.tquadrat.foundation.exception.NullArgumentException The
+     *      candidate is {@code null}.
+     *  @throws org.tquadrat.foundation.exception.EmptyArgumentException    The
+     *      candidate is the empty string.
+     *  @throws org.tquadrat.foundation.exception.BlankArgumentException    The
+     *      candidate consists of whitespace only.
+     *
+     *  @since 0.4.4
+     */
+    @API( status = INTERNAL, since = "0.4.4" )
+    public static final boolean checkGroupNameCandidate( final String candidate )
+    {
+        var retValue = requireNotBlankArgument( candidate, "candidate" ).indexOf( ']' ) < 0;
+        if( retValue ) retValue = candidate.indexOf( '\n' ) < 0;
+        if( retValue ) retValue = candidate.indexOf( '\t' ) < 0;
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
+    }   //  checkGroupNameCandidate()
 
     /**
      *  {@inheritDoc}
@@ -144,7 +178,13 @@ public final class Group implements Comparable<Group>
      */
     private final Value createValue( final String key )
     {
-        return new Value( this, requireNotEmptyArgument( key, "key" ) );
+        /*
+         * The key argument will be checked by the constructor itself.
+         */
+        final var retValue = new Value( this, key );
+
+        //---* Done *----------------------------------------------------------
+        return retValue;
     }   //  createValue()
 
     /**
@@ -195,7 +235,7 @@ public final class Group implements Comparable<Group>
      */
     public final Optional<Value> getValue( final String key )
     {
-        final var retValue = Optional.ofNullable( m_Values.get( requireNotEmptyArgument( key, "key" ) ) );
+        final var retValue = Optional.ofNullable( m_Values.get( requireValidArgument( key, "key", Value::checkKeyCandidate ) ) );
 
         //---* Done *----------------------------------------------------------
         return retValue;
@@ -234,7 +274,7 @@ public final class Group implements Comparable<Group>
     @API( status = INTERNAL, since = "0.4.3" )
     public final void setComment( final String key, final String comment )
     {
-        final var value = m_Values.computeIfAbsent( requireNotBlankArgument( key, "key" ), this::createValue );
+        final var value = m_Values.computeIfAbsent( requireValidArgument( key, "key", Value::checkKeyCandidate ), this::createValue );
         value.setComment( comment );
     }   //  setComment()
 
@@ -249,7 +289,7 @@ public final class Group implements Comparable<Group>
      */
     public final Value setValue( final String key, final String value )
     {
-        final var retValue = m_Values.computeIfAbsent( requireNotEmptyArgument( key, "key" ), this::createValue );
+        final var retValue = m_Values.computeIfAbsent( requireValidArgument( key, "key", Value::checkKeyCandidate ), this::createValue );
         retValue.setValue( value );
 
         //---* Done *----------------------------------------------------------

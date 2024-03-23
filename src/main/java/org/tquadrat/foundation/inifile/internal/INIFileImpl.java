@@ -216,7 +216,7 @@ public final class INIFileImpl implements INIFile
         while( remainder.length() > LINE_LENGTH )
         {
             //noinspection ConstantExpression
-            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH - 1 ) ) );
+            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH ) ) );
             remainder = remainder.substring( LINE_LENGTH );
         }
         builder.add( remainder );

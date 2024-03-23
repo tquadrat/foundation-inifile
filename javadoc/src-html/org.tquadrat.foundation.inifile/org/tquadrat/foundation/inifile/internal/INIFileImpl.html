@@ -229,7 +229,7 @@
 <span class="source-line-no">216</span><span id="line-216">        while( remainder.length() &gt; LINE_LENGTH )</span>
 <span class="source-line-no">217</span><span id="line-217">        {</span>
 <span class="source-line-no">218</span><span id="line-218">            //noinspection ConstantExpression</span>
-<span class="source-line-no">219</span><span id="line-219">            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH - 1 ) ) );</span>
+<span class="source-line-no">219</span><span id="line-219">            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH ) ) );</span>
 <span class="source-line-no">220</span><span id="line-220">            remainder = remainder.substring( LINE_LENGTH );</span>
 <span class="source-line-no">221</span><span id="line-221">        }</span>
 <span class="source-line-no">222</span><span id="line-222">        builder.add( remainder );</span>

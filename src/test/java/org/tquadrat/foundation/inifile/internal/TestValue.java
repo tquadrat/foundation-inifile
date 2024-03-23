@@ -199,14 +199,14 @@ public class TestValue extends TestBaseClass
         assertNotNull( candidate );
         expected =
             """
-            key = Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam no\\
-            umy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed di\\
-            m voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet \\
-            lita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit ame\\
-            . Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy\\
-            eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam v\\
-            luptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clit\\
-             kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. L\\
+            key = Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam non\\
+            umy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed dia\\
+            m voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet c\\
+            lita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet\\
+            . Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy \\
+            eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam vo\\
+            luptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita\\
+             kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lo\\
             rem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.
             """;
         actual = candidate.toString();
@@ -225,14 +225,14 @@ public class TestValue extends TestBaseClass
             # sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
             # rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
             # ipsum dolor sit amet.
-            key = Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam no\\
-            umy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed di\\
-            m voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet \\
-            lita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit ame\\
-            . Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy\\
-            eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam v\\
-            luptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clit\\
-             kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. L\\
+            key = Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam non\\
+            umy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed dia\\
+            m voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet c\\
+            lita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet\\
+            . Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy \\
+            eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam vo\\
+            luptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita\\
+             kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lo\\
             rem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.
             """;
         actual = candidate.toString();

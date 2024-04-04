@@ -68,12 +68,12 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 1105 2024-02-28 12:58:46Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1126 2024-03-23 10:34:54Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1105 2024-02-28 12:58:46Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1126 2024-03-23 10:34:54Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
@@ -209,9 +209,9 @@ public final class INIFileImpl implements INIFile
      *  @param  s   The String to split.
      *  @return The stream with the chunks.
      */
-    public static final Stream<String> breakString( final String s)
+    public static final Stream<String> breakString( final String s )
     {
-        var remainder = requireNonNullArgument( s, "s" );
+        var remainder = requireNonNullArgument( s, "s" ).replaceAll( "\n", "\\\\n" );
         final var builder = Stream.<String>builder();
         while( remainder.length() > LINE_LENGTH )
         {
@@ -494,7 +494,7 @@ public final class INIFileImpl implements INIFile
             final var pos = line.indexOf( '=' );
             if( pos < 1 ) throw new IOException( errorMessage.get() );
             final var key = line.substring( 0, pos ).trim();
-            final var data = line.length() > pos ? line.substring( pos + 1 ).trim() : EMPTY_STRING;
+            final var data = line.length() > pos ? line.substring( pos + 1 ).trim().translateEscapes() : EMPTY_STRING;
             final var value = currentGroup.setValue( key, data );
             commentBuffer.forEach( value::addComment );
             commentBuffer.clear();

@@ -43,7 +43,7 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
  */
 @SuppressWarnings( "SpellCheckingInspection" )
-@ClassVersion( sourceVersion = "$Id: TestValue.java 1105 2024-02-28 12:58:46Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: TestValue.java 1126 2024-03-23 10:34:54Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 @DisplayName( "org.tquadrat.foundation.inifile.internal.TestValue" )
 public class TestValue extends TestBaseClass

@@ -37,610 +37,614 @@
 <span class="source-line-no">024</span><span id="line-24">import static java.nio.file.Files.readAllLines;</span>
 <span class="source-line-no">025</span><span id="line-25">import static java.nio.file.Files.writeString;</span>
 <span class="source-line-no">026</span><span id="line-26">import static java.nio.file.StandardOpenOption.CREATE;</span>
-<span class="source-line-no">027</span><span id="line-27">import static java.nio.file.StandardOpenOption.WRITE;</span>
-<span class="source-line-no">028</span><span id="line-28">import static java.util.Comparator.naturalOrder;</span>
-<span class="source-line-no">029</span><span id="line-29">import static java.util.regex.Pattern.compile;</span>
-<span class="source-line-no">030</span><span id="line-30">import static java.util.stream.Collectors.joining;</span>
-<span class="source-line-no">031</span><span id="line-31">import static org.apiguardian.api.API.Status.INTERNAL;</span>
-<span class="source-line-no">032</span><span id="line-32">import static org.apiguardian.api.API.Status.STABLE;</span>
-<span class="source-line-no">033</span><span id="line-33">import static org.tquadrat.foundation.inifile.internal.Group.checkGroupNameCandidate;</span>
-<span class="source-line-no">034</span><span id="line-34">import static org.tquadrat.foundation.inifile.internal.Value.checkKeyCandidate;</span>
-<span class="source-line-no">035</span><span id="line-35">import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;</span>
-<span class="source-line-no">036</span><span id="line-36">import static org.tquadrat.foundation.lang.CommonConstants.UTF8;</span>
-<span class="source-line-no">037</span><span id="line-37">import static org.tquadrat.foundation.lang.Objects.isNull;</span>
-<span class="source-line-no">038</span><span id="line-38">import static org.tquadrat.foundation.lang.Objects.nonNull;</span>
-<span class="source-line-no">039</span><span id="line-39">import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;</span>
-<span class="source-line-no">040</span><span id="line-40">import static org.tquadrat.foundation.lang.Objects.requireValidArgument;</span>
-<span class="source-line-no">041</span><span id="line-41">import static org.tquadrat.foundation.util.StringUtils.breakText;</span>
-<span class="source-line-no">042</span><span id="line-42">import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;</span>
-<span class="source-line-no">043</span><span id="line-43"></span>
-<span class="source-line-no">044</span><span id="line-44">import java.io.IOException;</span>
-<span class="source-line-no">045</span><span id="line-45">import java.nio.file.Path;</span>
-<span class="source-line-no">046</span><span id="line-46">import java.time.Clock;</span>
-<span class="source-line-no">047</span><span id="line-47">import java.time.Instant;</span>
-<span class="source-line-no">048</span><span id="line-48">import java.util.ArrayList;</span>
-<span class="source-line-no">049</span><span id="line-49">import java.util.Collection;</span>
-<span class="source-line-no">050</span><span id="line-50">import java.util.LinkedHashMap;</span>
-<span class="source-line-no">051</span><span id="line-51">import java.util.List;</span>
-<span class="source-line-no">052</span><span id="line-52">import java.util.Map;</span>
-<span class="source-line-no">053</span><span id="line-53">import java.util.Optional;</span>
-<span class="source-line-no">054</span><span id="line-54">import java.util.StringJoiner;</span>
-<span class="source-line-no">055</span><span id="line-55">import java.util.regex.Pattern;</span>
-<span class="source-line-no">056</span><span id="line-56">import java.util.regex.PatternSyntaxException;</span>
-<span class="source-line-no">057</span><span id="line-57">import java.util.stream.Stream;</span>
-<span class="source-line-no">058</span><span id="line-58"></span>
-<span class="source-line-no">059</span><span id="line-59">import org.apiguardian.api.API;</span>
-<span class="source-line-no">060</span><span id="line-60">import org.tquadrat.foundation.annotation.ClassVersion;</span>
-<span class="source-line-no">061</span><span id="line-61">import org.tquadrat.foundation.inifile.INIFile;</span>
-<span class="source-line-no">062</span><span id="line-62">import org.tquadrat.foundation.lang.Lazy;</span>
-<span class="source-line-no">063</span><span id="line-63">import org.tquadrat.foundation.lang.StringConverter;</span>
-<span class="source-line-no">064</span><span id="line-64">import org.tquadrat.foundation.util.stringconverter.PathStringConverter;</span>
-<span class="source-line-no">065</span><span id="line-65"></span>
-<span class="source-line-no">066</span><span id="line-66">/**</span>
-<span class="source-line-no">067</span><span id="line-67"> *  The implementation for</span>
-<span class="source-line-no">068</span><span id="line-68"> *  {@link INIFile}.</span>
-<span class="source-line-no">069</span><span id="line-69"> *</span>
-<span class="source-line-no">070</span><span id="line-70"> *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org</span>
-<span class="source-line-no">071</span><span id="line-71"> *  @version $Id: INIFileImpl.java 1127 2024-04-04 20:21:25Z tquadrat $</span>
-<span class="source-line-no">072</span><span id="line-72"> *</span>
-<span class="source-line-no">073</span><span id="line-73"> *  @UMLGraph.link</span>
-<span class="source-line-no">074</span><span id="line-74"> *  @since 0.1.0</span>
-<span class="source-line-no">075</span><span id="line-75"> */</span>
-<span class="source-line-no">076</span><span id="line-76">@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1127 2024-04-04 20:21:25Z tquadrat $" )</span>
-<span class="source-line-no">077</span><span id="line-77">@API( status = INTERNAL, since = "0.1.0" )</span>
-<span class="source-line-no">078</span><span id="line-78">public final class INIFileImpl implements INIFile</span>
-<span class="source-line-no">079</span><span id="line-79">{</span>
-<span class="source-line-no">080</span><span id="line-80">        /*------------*\</span>
-<span class="source-line-no">081</span><span id="line-81">    ====** Attributes **=======================================================</span>
-<span class="source-line-no">082</span><span id="line-82">        \*------------*/</span>
-<span class="source-line-no">083</span><span id="line-83">    /**</span>
-<span class="source-line-no">084</span><span id="line-84">     *  The clock that is used to determine the last update. This is changed</span>
-<span class="source-line-no">085</span><span id="line-85">     *  only for testing purposes, the default is</span>
-<span class="source-line-no">086</span><span id="line-86">     *  {@link Clock#systemDefaultZone()}.</span>
-<span class="source-line-no">087</span><span id="line-87">     */</span>
-<span class="source-line-no">088</span><span id="line-88">    private Clock m_Clock = Clock.systemDefaultZone();</span>
-<span class="source-line-no">089</span><span id="line-89"></span>
-<span class="source-line-no">090</span><span id="line-90">    /**</span>
-<span class="source-line-no">091</span><span id="line-91">     *  The comment for this file.</span>
-<span class="source-line-no">092</span><span id="line-92">     */</span>
-<span class="source-line-no">093</span><span id="line-93">    @SuppressWarnings( "StringBufferField" )</span>
-<span class="source-line-no">094</span><span id="line-94">    private final StringBuilder m_Comment = new StringBuilder();</span>
-<span class="source-line-no">095</span><span id="line-95"></span>
-<span class="source-line-no">096</span><span id="line-96">    /**</span>
-<span class="source-line-no">097</span><span id="line-97">     *  The reference to file that is used to persist the contents.</span>
-<span class="source-line-no">098</span><span id="line-98">     */</span>
-<span class="source-line-no">099</span><span id="line-99">    private final Path m_File;</span>
-<span class="source-line-no">100</span><span id="line-100"></span>
-<span class="source-line-no">101</span><span id="line-101">    /**</span>
-<span class="source-line-no">102</span><span id="line-102">     *  The groups.</span>
-<span class="source-line-no">103</span><span id="line-103">     */</span>
-<span class="source-line-no">104</span><span id="line-104">    private final Map&lt;String,Group&gt; m_Groups = new LinkedHashMap&lt;&gt;();</span>
-<span class="source-line-no">105</span><span id="line-105"></span>
-<span class="source-line-no">106</span><span id="line-106">    /**</span>
-<span class="source-line-no">107</span><span id="line-107">     *  The time when the file was last updated.</span>
-<span class="source-line-no">108</span><span id="line-108">     */</span>
-<span class="source-line-no">109</span><span id="line-109">    private Instant m_LastUpdated;</span>
-<span class="source-line-no">110</span><span id="line-110"></span>
-<span class="source-line-no">111</span><span id="line-111">        /*------------------------*\</span>
-<span class="source-line-no">112</span><span id="line-112">    ====** Static Initialisations **===========================================</span>
-<span class="source-line-no">113</span><span id="line-113">        \*------------------------*/</span>
-<span class="source-line-no">114</span><span id="line-114">    /**</span>
-<span class="source-line-no">115</span><span id="line-115">     *  The format String that is used for the last updated comment.</span>
-<span class="source-line-no">116</span><span id="line-116">     */</span>
-<span class="source-line-no">117</span><span id="line-117">    private static final String LAST_UPDATED_FORMAT;</span>
-<span class="source-line-no">118</span><span id="line-118"></span>
-<span class="source-line-no">119</span><span id="line-119">    /**</span>
-<span class="source-line-no">120</span><span id="line-120">     *  The pattern that is used for the last updated comment.</span>
-<span class="source-line-no">121</span><span id="line-121">     */</span>
-<span class="source-line-no">122</span><span id="line-122">    private static final Pattern LAST_UPDATED_PATTERN;</span>
-<span class="source-line-no">123</span><span id="line-123"></span>
-<span class="source-line-no">124</span><span id="line-124">    static</span>
-<span class="source-line-no">125</span><span id="line-125">    {</span>
-<span class="source-line-no">126</span><span id="line-126">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">127</span><span id="line-127">        final var s = "# Last Update: ";</span>
-<span class="source-line-no">128</span><span id="line-128">        LAST_UPDATED_FORMAT = format( "%s%%s", s );</span>
-<span class="source-line-no">129</span><span id="line-129"></span>
-<span class="source-line-no">130</span><span id="line-130">        try</span>
-<span class="source-line-no">131</span><span id="line-131">        {</span>
-<span class="source-line-no">132</span><span id="line-132">            LAST_UPDATED_PATTERN = compile( format( "%s(.*)$", s ) );</span>
-<span class="source-line-no">133</span><span id="line-133">        }</span>
-<span class="source-line-no">134</span><span id="line-134">        catch( final PatternSyntaxException e )</span>
-<span class="source-line-no">135</span><span id="line-135">        {</span>
-<span class="source-line-no">136</span><span id="line-136">            throw new ExceptionInInitializerError( e );</span>
-<span class="source-line-no">137</span><span id="line-137">        }</span>
-<span class="source-line-no">138</span><span id="line-138">    }</span>
-<span class="source-line-no">139</span><span id="line-139"></span>
-<span class="source-line-no">140</span><span id="line-140">        /*--------------*\</span>
-<span class="source-line-no">141</span><span id="line-141">    ====** Constructors **=====================================================</span>
-<span class="source-line-no">142</span><span id="line-142">        \*--------------*/</span>
-<span class="source-line-no">143</span><span id="line-143">    /**</span>
-<span class="source-line-no">144</span><span id="line-144">     *  &lt;p&gt;{@summary Creates a new instance of {@code INIFileImpl}.}&lt;/p&gt;</span>
-<span class="source-line-no">145</span><span id="line-145">     *  &lt;p&gt;The constructor does not check whether the &lt;i&gt;file&lt;/i&gt; argument is</span>
-<span class="source-line-no">146</span><span id="line-146">     *  {@code null}; this has to be done by the factory methods</span>
-<span class="source-line-no">147</span><span id="line-147">     *  {@link #create(Path)}</span>
-<span class="source-line-no">148</span><span id="line-148">     *  and</span>
-<span class="source-line-no">149</span><span id="line-149">     *  {@link #open(Path)}.&lt;/p&gt;</span>
-<span class="source-line-no">150</span><span id="line-150">     *  &lt;p&gt;But that this constructor is public allows simpler tests.&lt;/p&gt;</span>
-<span class="source-line-no">151</span><span id="line-151">     *</span>
-<span class="source-line-no">152</span><span id="line-152">     *  @param  file    The file that holds the contents.</span>
-<span class="source-line-no">153</span><span id="line-153">     */</span>
-<span class="source-line-no">154</span><span id="line-154">    public INIFileImpl( final Path file )</span>
-<span class="source-line-no">155</span><span id="line-155">    {</span>
-<span class="source-line-no">156</span><span id="line-156">        m_File = file;</span>
-<span class="source-line-no">157</span><span id="line-157">        m_LastUpdated = Instant.now( m_Clock );</span>
-<span class="source-line-no">158</span><span id="line-158">    }   //  INIFileImpl()</span>
-<span class="source-line-no">159</span><span id="line-159"></span>
-<span class="source-line-no">160</span><span id="line-160">        /*---------*\</span>
-<span class="source-line-no">161</span><span id="line-161">    ====** Methods **==========================================================</span>
-<span class="source-line-no">162</span><span id="line-162">        \*---------*/</span>
-<span class="source-line-no">163</span><span id="line-163">    /**</span>
-<span class="source-line-no">164</span><span id="line-164">     * {@inheritDoc}</span>
-<span class="source-line-no">165</span><span id="line-165">     */</span>
-<span class="source-line-no">166</span><span id="line-166">    @Override</span>
-<span class="source-line-no">167</span><span id="line-167">    public final void addComment( final String comment )</span>
-<span class="source-line-no">168</span><span id="line-168">    {</span>
-<span class="source-line-no">169</span><span id="line-169">        if( isNotEmptyOrBlank( comment ) ) m_Comment.append( comment );</span>
-<span class="source-line-no">170</span><span id="line-170">    }   //  addComment()</span>
-<span class="source-line-no">171</span><span id="line-171"></span>
-<span class="source-line-no">172</span><span id="line-172">    /**</span>
-<span class="source-line-no">173</span><span id="line-173">     * {@inheritDoc}</span>
-<span class="source-line-no">174</span><span id="line-174">     */</span>
-<span class="source-line-no">175</span><span id="line-175">    @Override</span>
-<span class="source-line-no">176</span><span id="line-176">    public final void addComment( final String group, final String comment )</span>
-<span class="source-line-no">177</span><span id="line-177">    {</span>
-<span class="source-line-no">178</span><span id="line-178">        requireValidArgument( group, "group", Group::checkGroupNameCandidate );</span>
-<span class="source-line-no">179</span><span id="line-179">        if( isNotEmptyOrBlank( comment ) )</span>
-<span class="source-line-no">180</span><span id="line-180">        {</span>
-<span class="source-line-no">181</span><span id="line-181">            @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">182</span><span id="line-182">            final var g = m_Groups.computeIfAbsent( group, this::createGroup );</span>
-<span class="source-line-no">183</span><span id="line-183">            g.addComment( comment );</span>
-<span class="source-line-no">184</span><span id="line-184">        }</span>
-<span class="source-line-no">185</span><span id="line-185">    }   //  addComment()</span>
-<span class="source-line-no">186</span><span id="line-186"></span>
-<span class="source-line-no">187</span><span id="line-187">    /**</span>
-<span class="source-line-no">188</span><span id="line-188">     * {@inheritDoc}</span>
-<span class="source-line-no">189</span><span id="line-189">     */</span>
-<span class="source-line-no">190</span><span id="line-190">    @Override</span>
-<span class="source-line-no">191</span><span id="line-191">    public final void addComment( final String group, final String key, final String comment )</span>
-<span class="source-line-no">192</span><span id="line-192">    {</span>
-<span class="source-line-no">193</span><span id="line-193">        requireValidArgument( group, "group", Group::checkGroupNameCandidate );</span>
-<span class="source-line-no">194</span><span id="line-194">        requireValidArgument( key, "key", Value::checkKeyCandidate );</span>
-<span class="source-line-no">195</span><span id="line-195">        if( isNotEmptyOrBlank( comment ) )</span>
-<span class="source-line-no">196</span><span id="line-196">        {</span>
-<span class="source-line-no">197</span><span id="line-197">            @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">198</span><span id="line-198">            final var g = m_Groups.computeIfAbsent( group, this::createGroup );</span>
-<span class="source-line-no">199</span><span id="line-199">            g.addComment( key, comment );</span>
-<span class="source-line-no">200</span><span id="line-200">        }</span>
-<span class="source-line-no">201</span><span id="line-201">    }   //  addComment()</span>
-<span class="source-line-no">202</span><span id="line-202"></span>
-<span class="source-line-no">203</span><span id="line-203">    /**</span>
-<span class="source-line-no">204</span><span id="line-204">     *  &lt;p&gt;{@summary Breaks the given String into chunks of</span>
-<span class="source-line-no">205</span><span id="line-205">     *  {@value #LINE_LENGTH}</span>
-<span class="source-line-no">206</span><span id="line-206">     *  characters.} All but the last chunk will end with a backslash</span>
-<span class="source-line-no">207</span><span id="line-207">     *  (&amp;quot;\&amp;quot;).&lt;/p&gt;</span>
-<span class="source-line-no">208</span><span id="line-208">     *</span>
-<span class="source-line-no">209</span><span id="line-209">     *  @param  s   The String to split.</span>
-<span class="source-line-no">210</span><span id="line-210">     *  @return The stream with the chunks.</span>
-<span class="source-line-no">211</span><span id="line-211">     */</span>
-<span class="source-line-no">212</span><span id="line-212">    public static final Stream&lt;String&gt; breakString( final String s )</span>
-<span class="source-line-no">213</span><span id="line-213">    {</span>
-<span class="source-line-no">214</span><span id="line-214">        var remainder = requireNonNullArgument( s, "s" ).replaceAll( "\n", "\\\\n" );</span>
-<span class="source-line-no">215</span><span id="line-215">        final var builder = Stream.&lt;String&gt;builder();</span>
-<span class="source-line-no">216</span><span id="line-216">        while( remainder.length() &gt; LINE_LENGTH )</span>
-<span class="source-line-no">217</span><span id="line-217">        {</span>
-<span class="source-line-no">218</span><span id="line-218">            //noinspection ConstantExpression</span>
-<span class="source-line-no">219</span><span id="line-219">            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH ) ) );</span>
-<span class="source-line-no">220</span><span id="line-220">            remainder = remainder.substring( LINE_LENGTH );</span>
-<span class="source-line-no">221</span><span id="line-221">        }</span>
-<span class="source-line-no">222</span><span id="line-222">        builder.add( remainder );</span>
-<span class="source-line-no">223</span><span id="line-223"></span>
-<span class="source-line-no">224</span><span id="line-224">        final var retValue = builder.build();</span>
-<span class="source-line-no">225</span><span id="line-225"></span>
-<span class="source-line-no">226</span><span id="line-226">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">227</span><span id="line-227">        return retValue;</span>
-<span class="source-line-no">228</span><span id="line-228">    }   //  breakString()</span>
-<span class="source-line-no">229</span><span id="line-229"></span>
-<span class="source-line-no">230</span><span id="line-230">    /**</span>
-<span class="source-line-no">231</span><span id="line-231">     *  &lt;p&gt;{@summary Creates an empty INI file.} If the file already exists, it</span>
-<span class="source-line-no">232</span><span id="line-232">     *  will be overwritten without notice.&lt;/p&gt;</span>
-<span class="source-line-no">233</span><span id="line-233">     *  &lt;p&gt;The given file is used to store the value on a call to</span>
-<span class="source-line-no">234</span><span id="line-234">     *  {@link #save()}.&lt;/p&gt;</span>
-<span class="source-line-no">235</span><span id="line-235">     *</span>
-<span class="source-line-no">236</span><span id="line-236">     *  @param  file    The file.</span>
-<span class="source-line-no">237</span><span id="line-237">     *  @return The new instance.</span>
-<span class="source-line-no">238</span><span id="line-238">     */</span>
-<span class="source-line-no">239</span><span id="line-239">    public static final INIFile create( final Path file )</span>
-<span class="source-line-no">240</span><span id="line-240">    {</span>
-<span class="source-line-no">241</span><span id="line-241">        final INIFile retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );</span>
-<span class="source-line-no">242</span><span id="line-242"></span>
-<span class="source-line-no">243</span><span id="line-243">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">244</span><span id="line-244">        return retValue;</span>
-<span class="source-line-no">245</span><span id="line-245">    }   //  create()</span>
-<span class="source-line-no">246</span><span id="line-246"></span>
-<span class="source-line-no">247</span><span id="line-247">    /**</span>
-<span class="source-line-no">248</span><span id="line-248">     *  Creates a new instance of</span>
-<span class="source-line-no">249</span><span id="line-249">     *  {@link Group}</span>
-<span class="source-line-no">250</span><span id="line-250">     *  for the given name.</span>
-<span class="source-line-no">251</span><span id="line-251">     *</span>
-<span class="source-line-no">252</span><span id="line-252">     *  @param  group   The name of the group.</span>
-<span class="source-line-no">253</span><span id="line-253">     *  @return The new instance.</span>
-<span class="source-line-no">254</span><span id="line-254">     */</span>
-<span class="source-line-no">255</span><span id="line-255">    private final Group createGroup( final String group )</span>
-<span class="source-line-no">256</span><span id="line-256">    {</span>
-<span class="source-line-no">257</span><span id="line-257">        /*</span>
-<span class="source-line-no">258</span><span id="line-258">         * The argument check will be done by the constructor itself.</span>
-<span class="source-line-no">259</span><span id="line-259">         */</span>
-<span class="source-line-no">260</span><span id="line-260">        return new Group( group );</span>
-<span class="source-line-no">261</span><span id="line-261">    }   //  createGroup()</span>
-<span class="source-line-no">262</span><span id="line-262"></span>
-<span class="source-line-no">263</span><span id="line-263">    /**</span>
-<span class="source-line-no">264</span><span id="line-264">     *  Dumps the contents to a String.</span>
-<span class="source-line-no">265</span><span id="line-265">     *</span>
-<span class="source-line-no">266</span><span id="line-266">     *  @return The contents in a String.</span>
-<span class="source-line-no">267</span><span id="line-267">     */</span>
-<span class="source-line-no">268</span><span id="line-268">    @SuppressWarnings( "PublicMethodNotExposedInInterface" )</span>
-<span class="source-line-no">269</span><span id="line-269">    public final String dumpContents()</span>
-<span class="source-line-no">270</span><span id="line-270">    {</span>
-<span class="source-line-no">271</span><span id="line-271">        final var joiner = new StringJoiner( "\n", EMPTY_STRING, "\n" );</span>
-<span class="source-line-no">272</span><span id="line-272">        if( !m_Comment.isEmpty() )</span>
-<span class="source-line-no">273</span><span id="line-273">        {</span>
-<span class="source-line-no">274</span><span id="line-274">            splitComment( m_Comment ).forEach( joiner::add );</span>
-<span class="source-line-no">275</span><span id="line-275">        }</span>
-<span class="source-line-no">276</span><span id="line-276">        joiner.add( format( LAST_UPDATED_FORMAT, m_LastUpdated.toString() ) );</span>
-<span class="source-line-no">277</span><span id="line-277">        final var retValue = m_Groups.values()</span>
-<span class="source-line-no">278</span><span id="line-278">            .stream()</span>
-<span class="source-line-no">279</span><span id="line-279">            .map( Group::toString )</span>
-<span class="source-line-no">280</span><span id="line-280">            .collect( joining( EMPTY_STRING, joiner.toString(), EMPTY_STRING ) );</span>
-<span class="source-line-no">281</span><span id="line-281"></span>
-<span class="source-line-no">282</span><span id="line-282">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">283</span><span id="line-283">        return retValue;</span>
-<span class="source-line-no">284</span><span id="line-284">    }   //  dumpContents()</span>
-<span class="source-line-no">285</span><span id="line-285"></span>
-<span class="source-line-no">286</span><span id="line-286">    /**</span>
-<span class="source-line-no">287</span><span id="line-287">     *  {@inheritDoc}</span>
-<span class="source-line-no">288</span><span id="line-288">     */</span>
-<span class="source-line-no">289</span><span id="line-289">    @Override</span>
-<span class="source-line-no">290</span><span id="line-290">    public final Optional&lt;String&gt; getValue( final String group, final String key )</span>
-<span class="source-line-no">291</span><span id="line-291">    {</span>
-<span class="source-line-no">292</span><span id="line-292">        Optional&lt;String&gt; retValue = Optional.empty();</span>
-<span class="source-line-no">293</span><span id="line-293">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">294</span><span id="line-294">        final var g = m_Groups.get( requireValidArgument( group, "group", Group::checkGroupNameCandidate ) );</span>
-<span class="source-line-no">295</span><span id="line-295">        if( nonNull( g ) )</span>
-<span class="source-line-no">296</span><span id="line-296">        {</span>
-<span class="source-line-no">297</span><span id="line-297">            retValue = g.getValue( key )</span>
-<span class="source-line-no">298</span><span id="line-298">                .map( Value::getValue );</span>
-<span class="source-line-no">299</span><span id="line-299">        }</span>
-<span class="source-line-no">300</span><span id="line-300"></span>
-<span class="source-line-no">301</span><span id="line-301">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">302</span><span id="line-302">        return retValue;</span>
-<span class="source-line-no">303</span><span id="line-303">    }   //  getValue()</span>
-<span class="source-line-no">304</span><span id="line-304"></span>
-<span class="source-line-no">305</span><span id="line-305">    /**</span>
-<span class="source-line-no">306</span><span id="line-306">     *  {@inheritDoc}</span>
-<span class="source-line-no">307</span><span id="line-307">     */</span>
-<span class="source-line-no">308</span><span id="line-308">    @Override</span>
-<span class="source-line-no">309</span><span id="line-309">    public final &lt;T&gt; Optional&lt;T&gt; getValue( final String group, final String key, final StringConverter&lt;? extends T&gt; stringConverter )</span>
-<span class="source-line-no">310</span><span id="line-310">    {</span>
-<span class="source-line-no">311</span><span id="line-311">        requireNonNullArgument( stringConverter, "stringConverter" );</span>
-<span class="source-line-no">312</span><span id="line-312">        final Optional&lt;T&gt; retValue = getValue( group, key )</span>
-<span class="source-line-no">313</span><span id="line-313">            .map( stringConverter::fromString );</span>
-<span class="source-line-no">314</span><span id="line-314"></span>
-<span class="source-line-no">315</span><span id="line-315">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">316</span><span id="line-316">        return retValue;</span>
-<span class="source-line-no">317</span><span id="line-317">    }   //  getValue()</span>
-<span class="source-line-no">318</span><span id="line-318"></span>
-<span class="source-line-no">319</span><span id="line-319">    /**</span>
-<span class="source-line-no">320</span><span id="line-320">     *  {@inheritDoc}</span>
-<span class="source-line-no">321</span><span id="line-321">     */</span>
-<span class="source-line-no">322</span><span id="line-322">    @Override</span>
-<span class="source-line-no">323</span><span id="line-323">    public final boolean hasGroup( final String group )</span>
-<span class="source-line-no">324</span><span id="line-324">    {</span>
-<span class="source-line-no">325</span><span id="line-325">        return isNotEmptyOrBlank( group ) &amp;&amp; checkGroupNameCandidate( group ) &amp;&amp; m_Groups.containsKey( group );</span>
-<span class="source-line-no">326</span><span id="line-326">    }   //  hasGroup()</span>
-<span class="source-line-no">327</span><span id="line-327"></span>
-<span class="source-line-no">328</span><span id="line-328">    /**</span>
-<span class="source-line-no">329</span><span id="line-329">     *  {@inheritDoc}</span>
-<span class="source-line-no">330</span><span id="line-330">     */</span>
-<span class="source-line-no">331</span><span id="line-331">    @Override</span>
-<span class="source-line-no">332</span><span id="line-332">    public final boolean hasValue( final String group, final String key )</span>
-<span class="source-line-no">333</span><span id="line-333">    {</span>
-<span class="source-line-no">334</span><span id="line-334">        final var retValue = isNotEmptyOrBlank( group )</span>
-<span class="source-line-no">335</span><span id="line-335">            &amp;&amp; isNotEmptyOrBlank( key )</span>
-<span class="source-line-no">336</span><span id="line-336">            &amp;&amp; checkGroupNameCandidate( group )</span>
-<span class="source-line-no">337</span><span id="line-337">            &amp;&amp; checkKeyCandidate( key )</span>
-<span class="source-line-no">338</span><span id="line-338">            &amp;&amp; getValue( group, key ).isPresent();</span>
-<span class="source-line-no">339</span><span id="line-339"></span>
-<span class="source-line-no">340</span><span id="line-340">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">341</span><span id="line-341">        return retValue;</span>
-<span class="source-line-no">342</span><span id="line-342">    }   //  hasValue()</span>
-<span class="source-line-no">343</span><span id="line-343"></span>
-<span class="source-line-no">344</span><span id="line-344">    /**</span>
-<span class="source-line-no">345</span><span id="line-345">     *  Join all lines that end with a backslash with the next line on the</span>
-<span class="source-line-no">346</span><span id="line-346">     *  list.</span>
-<span class="source-line-no">347</span><span id="line-347">     *</span>
-<span class="source-line-no">348</span><span id="line-348">     *  @param  lines   The input lines.</span>
-<span class="source-line-no">349</span><span id="line-349">     *  @return The output.</span>
-<span class="source-line-no">350</span><span id="line-350">     */</span>
-<span class="source-line-no">351</span><span id="line-351">    private final List&lt;String&gt; joinLines( final Iterable&lt;String&gt; lines )</span>
-<span class="source-line-no">352</span><span id="line-352">    {</span>
-<span class="source-line-no">353</span><span id="line-353">        final List&lt;String&gt; retValue = new ArrayList&lt;&gt;();</span>
-<span class="source-line-no">354</span><span id="line-354"></span>
-<span class="source-line-no">355</span><span id="line-355">        final var buffer = new StringBuilder();</span>
-<span class="source-line-no">356</span><span id="line-356">        for( final var line : lines )</span>
-<span class="source-line-no">357</span><span id="line-357">        {</span>
-<span class="source-line-no">358</span><span id="line-358">            if( line.endsWith( "\\" ) )</span>
-<span class="source-line-no">359</span><span id="line-359">            {</span>
-<span class="source-line-no">360</span><span id="line-360">                buffer.append( line );</span>
-<span class="source-line-no">361</span><span id="line-361">                buffer.setLength( buffer.length() - 1 );</span>
-<span class="source-line-no">362</span><span id="line-362">            }</span>
-<span class="source-line-no">363</span><span id="line-363">            else if( buffer.isEmpty() )</span>
-<span class="source-line-no">364</span><span id="line-364">            {</span>
-<span class="source-line-no">365</span><span id="line-365">                retValue.add( line );</span>
-<span class="source-line-no">366</span><span id="line-366">            }</span>
-<span class="source-line-no">367</span><span id="line-367">            else</span>
-<span class="source-line-no">368</span><span id="line-368">            {</span>
-<span class="source-line-no">369</span><span id="line-369">                buffer.append( line );</span>
-<span class="source-line-no">370</span><span id="line-370">                retValue.add( buffer.toString() );</span>
-<span class="source-line-no">371</span><span id="line-371">                buffer.setLength( 0 );</span>
-<span class="source-line-no">372</span><span id="line-372">            }</span>
-<span class="source-line-no">373</span><span id="line-373">        }</span>
-<span class="source-line-no">374</span><span id="line-374">        if( !buffer.isEmpty() ) retValue.add( buffer.toString() );</span>
-<span class="source-line-no">375</span><span id="line-375"></span>
-<span class="source-line-no">376</span><span id="line-376">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">377</span><span id="line-377">        return retValue;</span>
-<span class="source-line-no">378</span><span id="line-378">    }   //  joinLines()</span>
-<span class="source-line-no">379</span><span id="line-379"></span>
-<span class="source-line-no">380</span><span id="line-380">    /**</span>
-<span class="source-line-no">381</span><span id="line-381">     *  {@inheritDoc}</span>
-<span class="source-line-no">382</span><span id="line-382">     */</span>
-<span class="source-line-no">383</span><span id="line-383">    @Override</span>
-<span class="source-line-no">384</span><span id="line-384">    public final Collection&lt;Entry&gt; listEntries()</span>
-<span class="source-line-no">385</span><span id="line-385">    {</span>
-<span class="source-line-no">386</span><span id="line-386">        final List&lt;Entry&gt; buffer = new ArrayList&lt;&gt;();</span>
-<span class="source-line-no">387</span><span id="line-387">        for( final var group : m_Groups.values() )</span>
-<span class="source-line-no">388</span><span id="line-388">        {</span>
-<span class="source-line-no">389</span><span id="line-389">            for( final var key : group.getKeys() )</span>
-<span class="source-line-no">390</span><span id="line-390">            {</span>
-<span class="source-line-no">391</span><span id="line-391">                final var value = group.getValue( key );</span>
-<span class="source-line-no">392</span><span id="line-392">                buffer.add( new Entry( group.getName(), key, value.map( Value::getValue ).orElse( null ) ) );</span>
-<span class="source-line-no">393</span><span id="line-393">            }</span>
-<span class="source-line-no">394</span><span id="line-394">        }</span>
-<span class="source-line-no">395</span><span id="line-395">        buffer.sort( naturalOrder() );</span>
-<span class="source-line-no">396</span><span id="line-396">        final var retValue = List.copyOf( buffer );</span>
-<span class="source-line-no">397</span><span id="line-397"></span>
-<span class="source-line-no">398</span><span id="line-398">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">399</span><span id="line-399">        return retValue;</span>
-<span class="source-line-no">400</span><span id="line-400">    }   //  listEntries()</span>
-<span class="source-line-no">401</span><span id="line-401"></span>
-<span class="source-line-no">402</span><span id="line-402">    /**</span>
-<span class="source-line-no">403</span><span id="line-403">     *  Opens the given INI file and reads its contents. If the file does not</span>
-<span class="source-line-no">404</span><span id="line-404">     *  exist yet, a new, empty file will be created.</span>
-<span class="source-line-no">405</span><span id="line-405">     *</span>
-<span class="source-line-no">406</span><span id="line-406">     *  @param  file    The file.</span>
-<span class="source-line-no">407</span><span id="line-407">     *  @return The new instance.</span>
-<span class="source-line-no">408</span><span id="line-408">     *  @throws IOException A problem occurred when reading the file.</span>
-<span class="source-line-no">409</span><span id="line-409">     */</span>
-<span class="source-line-no">410</span><span id="line-410">    public static final INIFile open( final Path file ) throws IOException</span>
-<span class="source-line-no">411</span><span id="line-411">    {</span>
-<span class="source-line-no">412</span><span id="line-412">        final var retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );</span>
-<span class="source-line-no">413</span><span id="line-413">        retValue.parse();</span>
-<span class="source-line-no">414</span><span id="line-414"></span>
-<span class="source-line-no">415</span><span id="line-415">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">416</span><span id="line-416">        return retValue;</span>
-<span class="source-line-no">417</span><span id="line-417">    }   //  open()</span>
-<span class="source-line-no">418</span><span id="line-418"></span>
-<span class="source-line-no">419</span><span id="line-419">    /**</span>
-<span class="source-line-no">420</span><span id="line-420">     *  Loads the content from the file into memory.</span>
-<span class="source-line-no">421</span><span id="line-421">     *</span>
-<span class="source-line-no">422</span><span id="line-422">     *  @throws IOException A problem occurred when reading the file.</span>
-<span class="source-line-no">423</span><span id="line-423">     */</span>
-<span class="source-line-no">424</span><span id="line-424">    private final void parse() throws IOException</span>
-<span class="source-line-no">425</span><span id="line-425">    {</span>
-<span class="source-line-no">426</span><span id="line-426">        if( exists( m_File ) )</span>
-<span class="source-line-no">427</span><span id="line-427">        {</span>
-<span class="source-line-no">428</span><span id="line-428">            final var lines = joinLines( readAllLines( m_File, UTF8 ) );</span>
-<span class="source-line-no">429</span><span id="line-429">            parse( lines );</span>
-<span class="source-line-no">430</span><span id="line-430">        }</span>
-<span class="source-line-no">431</span><span id="line-431">    }   //  parse()</span>
-<span class="source-line-no">432</span><span id="line-432"></span>
-<span class="source-line-no">433</span><span id="line-433">    /**</span>
-<span class="source-line-no">434</span><span id="line-434">     *  Parses the given lines to the INI file contents.</span>
-<span class="source-line-no">435</span><span id="line-435">     *</span>
-<span class="source-line-no">436</span><span id="line-436">     *  @param  lines   The joined lines; the list does not contain any</span>
-<span class="source-line-no">437</span><span id="line-437">     *      multi-line constructs.</span>
-<span class="source-line-no">438</span><span id="line-438">     *  @throws IOException The structure is invalid.</span>
-<span class="source-line-no">439</span><span id="line-439">     */</span>
-<span class="source-line-no">440</span><span id="line-440">    @SuppressWarnings( {"PublicMethodNotExposedInInterface", "OverlyComplexMethod"} )</span>
-<span class="source-line-no">441</span><span id="line-441">    public final void parse( final List&lt;String&gt; lines ) throws IOException</span>
-<span class="source-line-no">442</span><span id="line-442">    {</span>
-<span class="source-line-no">443</span><span id="line-443">        Group currentGroup = null;</span>
-<span class="source-line-no">444</span><span id="line-444">        final Collection&lt;String&gt; commentBuffer = new ArrayList&lt;&gt;();</span>
-<span class="source-line-no">445</span><span id="line-445">        m_Comment.setLength( 0 );</span>
-<span class="source-line-no">446</span><span id="line-446">        var commentsToBuffer = false;</span>
-<span class="source-line-no">447</span><span id="line-447"></span>
-<span class="source-line-no">448</span><span id="line-448">        final var errorMessage = Lazy.use( () -&gt; "'%s' has invalid structure".formatted( PathStringConverter.INSTANCE.toString( m_File ) ) );</span>
-<span class="source-line-no">449</span><span id="line-449"></span>
-<span class="source-line-no">450</span><span id="line-450">        final var groupPattern = compile( "\\[(.*)]" );</span>
-<span class="source-line-no">451</span><span id="line-451">        ScanLoop: for( final var line : requireNonNullArgument( lines, "lines" ) )</span>
-<span class="source-line-no">452</span><span id="line-452">        {</span>
-<span class="source-line-no">453</span><span id="line-453">            var matcher = LAST_UPDATED_PATTERN.matcher( line );</span>
-<span class="source-line-no">454</span><span id="line-454">            if( matcher.matches() )</span>
-<span class="source-line-no">455</span><span id="line-455">            {</span>
-<span class="source-line-no">456</span><span id="line-456">                m_LastUpdated = Instant.parse( matcher.group( 1 ) );</span>
-<span class="source-line-no">457</span><span id="line-457">                continue ScanLoop;</span>
-<span class="source-line-no">458</span><span id="line-458">            }</span>
-<span class="source-line-no">459</span><span id="line-459"></span>
-<span class="source-line-no">460</span><span id="line-460">            if( line.startsWith( "#" ) )</span>
-<span class="source-line-no">461</span><span id="line-461">            {</span>
-<span class="source-line-no">462</span><span id="line-462">                //---* Comment line found *------------------------------------</span>
-<span class="source-line-no">463</span><span id="line-463">                @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">464</span><span id="line-464">                final var s = (line.length() &gt; 1 ? line.substring( 1 ).trim() : EMPTY_STRING);</span>
-<span class="source-line-no">465</span><span id="line-465">                if( commentsToBuffer )</span>
-<span class="source-line-no">466</span><span id="line-466">                {</span>
-<span class="source-line-no">467</span><span id="line-467">                    commentBuffer.add( s );</span>
-<span class="source-line-no">468</span><span id="line-468">                }</span>
-<span class="source-line-no">469</span><span id="line-469">                else</span>
-<span class="source-line-no">470</span><span id="line-470">                {</span>
-<span class="source-line-no">471</span><span id="line-471">                    m_Comment.append( s );</span>
-<span class="source-line-no">472</span><span id="line-472">                }</span>
-<span class="source-line-no">473</span><span id="line-473">                continue ScanLoop;</span>
-<span class="source-line-no">474</span><span id="line-474">            }</span>
-<span class="source-line-no">475</span><span id="line-475"></span>
-<span class="source-line-no">476</span><span id="line-476">            matcher = groupPattern.matcher( line );</span>
-<span class="source-line-no">477</span><span id="line-477">            if( matcher.matches() )</span>
-<span class="source-line-no">478</span><span id="line-478">            {</span>
-<span class="source-line-no">479</span><span id="line-479">                final var name = matcher.group( 1 );</span>
-<span class="source-line-no">480</span><span id="line-480">                currentGroup = createGroup( name );</span>
-<span class="source-line-no">481</span><span id="line-481">                m_Groups.put( name, currentGroup );</span>
-<span class="source-line-no">482</span><span id="line-482">                commentBuffer.forEach( currentGroup::addComment );</span>
-<span class="source-line-no">483</span><span id="line-483">                commentBuffer.clear();</span>
-<span class="source-line-no">484</span><span id="line-484">                continue ScanLoop;</span>
-<span class="source-line-no">485</span><span id="line-485">            }</span>
-<span class="source-line-no">486</span><span id="line-486"></span>
-<span class="source-line-no">487</span><span id="line-487">            if( line.isBlank() )</span>
-<span class="source-line-no">488</span><span id="line-488">            {</span>
-<span class="source-line-no">489</span><span id="line-489">                commentsToBuffer = true;</span>
-<span class="source-line-no">490</span><span id="line-490">                continue ScanLoop;</span>
-<span class="source-line-no">491</span><span id="line-491">            }</span>
-<span class="source-line-no">492</span><span id="line-492"></span>
-<span class="source-line-no">493</span><span id="line-493">            if( isNull( currentGroup) ) throw new IOException( errorMessage.get() );</span>
-<span class="source-line-no">494</span><span id="line-494">            final var pos = line.indexOf( '=' );</span>
-<span class="source-line-no">495</span><span id="line-495">            if( pos &lt; 1 ) throw new IOException( errorMessage.get() );</span>
-<span class="source-line-no">496</span><span id="line-496">            final var key = line.substring( 0, pos ).trim();</span>
-<span class="source-line-no">497</span><span id="line-497">            final var data = line.length() &gt; pos ? line.substring( pos + 1 ).trim().translateEscapes() : EMPTY_STRING;</span>
-<span class="source-line-no">498</span><span id="line-498">            final var value = currentGroup.setValue( key, data );</span>
-<span class="source-line-no">499</span><span id="line-499">            commentBuffer.forEach( value::addComment );</span>
-<span class="source-line-no">500</span><span id="line-500">            commentBuffer.clear();</span>
-<span class="source-line-no">501</span><span id="line-501">        }   //  ScanLoop:</span>
-<span class="source-line-no">502</span><span id="line-502">    }   //  parse()</span>
-<span class="source-line-no">503</span><span id="line-503"></span>
-<span class="source-line-no">504</span><span id="line-504">    /**</span>
-<span class="source-line-no">505</span><span id="line-505">     *  {@inheritDoc}</span>
-<span class="source-line-no">506</span><span id="line-506">     */</span>
-<span class="source-line-no">507</span><span id="line-507">    @Override</span>
-<span class="source-line-no">508</span><span id="line-508">    public final void refresh() throws IOException { parse(); }</span>
-<span class="source-line-no">509</span><span id="line-509"></span>
-<span class="source-line-no">510</span><span id="line-510">    /**</span>
-<span class="source-line-no">511</span><span id="line-511">     *  Saves the contents of the INI file to the file that was provided to</span>
-<span class="source-line-no">512</span><span id="line-512">     *  {@link #create(Path)}</span>
-<span class="source-line-no">513</span><span id="line-513">     *  or</span>
-<span class="source-line-no">514</span><span id="line-514">     *  {@link #open(Path)}.</span>
-<span class="source-line-no">515</span><span id="line-515">     *</span>
-<span class="source-line-no">516</span><span id="line-516">     *  @throws IOException  A problem occurred when writing the contents to</span>
-<span class="source-line-no">517</span><span id="line-517">     *      the file.</span>
-<span class="source-line-no">518</span><span id="line-518">     */</span>
-<span class="source-line-no">519</span><span id="line-519">    @Override</span>
-<span class="source-line-no">520</span><span id="line-520">    public final void save() throws IOException</span>
-<span class="source-line-no">521</span><span id="line-521">    {</span>
-<span class="source-line-no">522</span><span id="line-522">        if( notExists( m_File ) )</span>
-<span class="source-line-no">523</span><span id="line-523">        {</span>
-<span class="source-line-no">524</span><span id="line-524">            final var folder = m_File.getParent();</span>
-<span class="source-line-no">525</span><span id="line-525">            if( notExists( folder ) ) createDirectories( folder );</span>
-<span class="source-line-no">526</span><span id="line-526">        }</span>
-<span class="source-line-no">527</span><span id="line-527">        m_LastUpdated = Instant.now( m_Clock );</span>
-<span class="source-line-no">528</span><span id="line-528">        writeString( m_File, dumpContents(), UTF8, CREATE, WRITE );</span>
-<span class="source-line-no">529</span><span id="line-529">    }   //  save()</span>
-<span class="source-line-no">530</span><span id="line-530"></span>
-<span class="source-line-no">531</span><span id="line-531">    /**</span>
-<span class="source-line-no">532</span><span id="line-532">     *  &lt;p&gt;{@summary Sets the clock that is used to determine the last</span>
-<span class="source-line-no">533</span><span id="line-533">     *  update.}&lt;/p&gt;</span>
-<span class="source-line-no">534</span><span id="line-534">     *  &lt;p&gt;This is used only for testing purposes.&lt;/p&gt;</span>
-<span class="source-line-no">535</span><span id="line-535">     *</span>
-<span class="source-line-no">536</span><span id="line-536">     *  @param  clock   The clock.</span>
-<span class="source-line-no">537</span><span id="line-537">     */</span>
-<span class="source-line-no">538</span><span id="line-538">    @SuppressWarnings( "PublicMethodNotExposedInInterface" )</span>
-<span class="source-line-no">539</span><span id="line-539">    public final void setClock( final Clock clock )</span>
-<span class="source-line-no">540</span><span id="line-540">    {</span>
-<span class="source-line-no">541</span><span id="line-541">        m_Clock = requireNonNullArgument( clock, "clock" );</span>
-<span class="source-line-no">542</span><span id="line-542">        m_LastUpdated = Instant.now( clock );</span>
-<span class="source-line-no">543</span><span id="line-543">    }   //  setClock()</span>
-<span class="source-line-no">544</span><span id="line-544"></span>
-<span class="source-line-no">545</span><span id="line-545">    /**</span>
-<span class="source-line-no">546</span><span id="line-546">     * {@inheritDoc}</span>
-<span class="source-line-no">547</span><span id="line-547">     *</span>
-<span class="source-line-no">548</span><span id="line-548">     *  @since 0.4.3</span>
-<span class="source-line-no">549</span><span id="line-549">     */</span>
-<span class="source-line-no">550</span><span id="line-550">    @API( status = STABLE, since = "0.4.3" )</span>
-<span class="source-line-no">551</span><span id="line-551">    @Override</span>
-<span class="source-line-no">552</span><span id="line-552">    public final void setComment( final String comment )</span>
-<span class="source-line-no">553</span><span id="line-553">    {</span>
-<span class="source-line-no">554</span><span id="line-554">        m_Comment.setLength( 0 );</span>
-<span class="source-line-no">555</span><span id="line-555">        addComment( comment );</span>
-<span class="source-line-no">556</span><span id="line-556">    }   //  setComment()</span>
-<span class="source-line-no">557</span><span id="line-557"></span>
-<span class="source-line-no">558</span><span id="line-558">    /**</span>
-<span class="source-line-no">559</span><span id="line-559">     * {@inheritDoc}</span>
-<span class="source-line-no">560</span><span id="line-560">     *</span>
-<span class="source-line-no">561</span><span id="line-561">     *  @since 0.4.3</span>
-<span class="source-line-no">562</span><span id="line-562">     */</span>
-<span class="source-line-no">563</span><span id="line-563">    @API( status = STABLE, since = "0.4.3" )</span>
-<span class="source-line-no">564</span><span id="line-564">    @Override</span>
-<span class="source-line-no">565</span><span id="line-565">    public final void setComment( final String group, final String comment )</span>
-<span class="source-line-no">566</span><span id="line-566">    {</span>
-<span class="source-line-no">567</span><span id="line-567">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">568</span><span id="line-568">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
-<span class="source-line-no">569</span><span id="line-569">        g.setComment( comment );</span>
-<span class="source-line-no">570</span><span id="line-570">    }   //  setComment()</span>
-<span class="source-line-no">571</span><span id="line-571"></span>
-<span class="source-line-no">572</span><span id="line-572">    /**</span>
-<span class="source-line-no">573</span><span id="line-573">     * {@inheritDoc}</span>
-<span class="source-line-no">574</span><span id="line-574">     *</span>
-<span class="source-line-no">575</span><span id="line-575">     *  @since 0.4.3</span>
-<span class="source-line-no">576</span><span id="line-576">     */</span>
-<span class="source-line-no">577</span><span id="line-577">    @API( status = STABLE, since = "0.4.3" )</span>
-<span class="source-line-no">578</span><span id="line-578">    @Override</span>
-<span class="source-line-no">579</span><span id="line-579">    public final void setComment( final String group, final String key, final String comment )</span>
-<span class="source-line-no">580</span><span id="line-580">    {</span>
-<span class="source-line-no">581</span><span id="line-581">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">582</span><span id="line-582">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
-<span class="source-line-no">583</span><span id="line-583">        g.setComment( requireValidArgument( key, "key", Value::checkKeyCandidate ), comment );</span>
-<span class="source-line-no">584</span><span id="line-584">    }   //  setComment()</span>
-<span class="source-line-no">585</span><span id="line-585"></span>
-<span class="source-line-no">586</span><span id="line-586">    /**</span>
-<span class="source-line-no">587</span><span id="line-587">     *  {@inheritDoc}</span>
-<span class="source-line-no">588</span><span id="line-588">     */</span>
-<span class="source-line-no">589</span><span id="line-589">    @Override</span>
-<span class="source-line-no">590</span><span id="line-590">    public final void setValue( final String group, final String key, final String value )</span>
-<span class="source-line-no">591</span><span id="line-591">    {</span>
-<span class="source-line-no">592</span><span id="line-592">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
-<span class="source-line-no">593</span><span id="line-593">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
-<span class="source-line-no">594</span><span id="line-594">        g.setValue( key, value );</span>
-<span class="source-line-no">595</span><span id="line-595">    }   //  setValue()</span>
-<span class="source-line-no">596</span><span id="line-596"></span>
-<span class="source-line-no">597</span><span id="line-597">    /**</span>
-<span class="source-line-no">598</span><span id="line-598">     *  Splits a comment to the proper line length.</span>
-<span class="source-line-no">599</span><span id="line-599">     *</span>
-<span class="source-line-no">600</span><span id="line-600">     *  @param  comment The comment to split.</span>
-<span class="source-line-no">601</span><span id="line-601">     *  @return The lines for the comment.</span>
-<span class="source-line-no">602</span><span id="line-602">     */</span>
-<span class="source-line-no">603</span><span id="line-603">    public static final Collection&lt;String&gt; splitComment( final CharSequence comment )</span>
-<span class="source-line-no">604</span><span id="line-604">    {</span>
-<span class="source-line-no">605</span><span id="line-605">        final Collection&lt;String&gt; retValue = new ArrayList&lt;&gt;();</span>
-<span class="source-line-no">606</span><span id="line-606"></span>
-<span class="source-line-no">607</span><span id="line-607">        if( !requireNonNullArgument( comment, "comment" ).isEmpty() )</span>
-<span class="source-line-no">608</span><span id="line-608">        {</span>
-<span class="source-line-no">609</span><span id="line-609">            //noinspection ConstantExpression</span>
-<span class="source-line-no">610</span><span id="line-610">            breakText( comment, LINE_LENGTH - 2 )</span>
-<span class="source-line-no">611</span><span id="line-611">                .map( "# "::concat )</span>
-<span class="source-line-no">612</span><span id="line-612">                .map( String::trim )</span>
-<span class="source-line-no">613</span><span id="line-613">                .forEach( retValue::add );</span>
-<span class="source-line-no">614</span><span id="line-614">        }</span>
-<span class="source-line-no">615</span><span id="line-615"></span>
-<span class="source-line-no">616</span><span id="line-616">        //---* Done *----------------------------------------------------------</span>
-<span class="source-line-no">617</span><span id="line-617">        return retValue;</span>
-<span class="source-line-no">618</span><span id="line-618">    }   //  splitComment()</span>
+<span class="source-line-no">027</span><span id="line-27">import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;</span>
+<span class="source-line-no">028</span><span id="line-28">import static java.nio.file.StandardOpenOption.WRITE;</span>
+<span class="source-line-no">029</span><span id="line-29">import static java.util.Comparator.naturalOrder;</span>
+<span class="source-line-no">030</span><span id="line-30">import static java.util.regex.Pattern.compile;</span>
+<span class="source-line-no">031</span><span id="line-31">import static java.util.stream.Collectors.joining;</span>
+<span class="source-line-no">032</span><span id="line-32">import static org.apiguardian.api.API.Status.INTERNAL;</span>
+<span class="source-line-no">033</span><span id="line-33">import static org.apiguardian.api.API.Status.STABLE;</span>
+<span class="source-line-no">034</span><span id="line-34">import static org.tquadrat.foundation.inifile.internal.Group.checkGroupNameCandidate;</span>
+<span class="source-line-no">035</span><span id="line-35">import static org.tquadrat.foundation.inifile.internal.Value.checkKeyCandidate;</span>
+<span class="source-line-no">036</span><span id="line-36">import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;</span>
+<span class="source-line-no">037</span><span id="line-37">import static org.tquadrat.foundation.lang.CommonConstants.UTF8;</span>
+<span class="source-line-no">038</span><span id="line-38">import static org.tquadrat.foundation.lang.Objects.isNull;</span>
+<span class="source-line-no">039</span><span id="line-39">import static org.tquadrat.foundation.lang.Objects.nonNull;</span>
+<span class="source-line-no">040</span><span id="line-40">import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;</span>
+<span class="source-line-no">041</span><span id="line-41">import static org.tquadrat.foundation.lang.Objects.requireValidArgument;</span>
+<span class="source-line-no">042</span><span id="line-42">import static org.tquadrat.foundation.util.StringUtils.breakText;</span>
+<span class="source-line-no">043</span><span id="line-43">import static org.tquadrat.foundation.util.StringUtils.isNotEmptyOrBlank;</span>
+<span class="source-line-no">044</span><span id="line-44"></span>
+<span class="source-line-no">045</span><span id="line-45">import java.io.IOException;</span>
+<span class="source-line-no">046</span><span id="line-46">import java.nio.file.Path;</span>
+<span class="source-line-no">047</span><span id="line-47">import java.time.Clock;</span>
+<span class="source-line-no">048</span><span id="line-48">import java.time.Instant;</span>
+<span class="source-line-no">049</span><span id="line-49">import java.util.ArrayList;</span>
+<span class="source-line-no">050</span><span id="line-50">import java.util.Collection;</span>
+<span class="source-line-no">051</span><span id="line-51">import java.util.LinkedHashMap;</span>
+<span class="source-line-no">052</span><span id="line-52">import java.util.List;</span>
+<span class="source-line-no">053</span><span id="line-53">import java.util.Map;</span>
+<span class="source-line-no">054</span><span id="line-54">import java.util.Optional;</span>
+<span class="source-line-no">055</span><span id="line-55">import java.util.StringJoiner;</span>
+<span class="source-line-no">056</span><span id="line-56">import java.util.regex.Pattern;</span>
+<span class="source-line-no">057</span><span id="line-57">import java.util.regex.PatternSyntaxException;</span>
+<span class="source-line-no">058</span><span id="line-58">import java.util.stream.Stream;</span>
+<span class="source-line-no">059</span><span id="line-59"></span>
+<span class="source-line-no">060</span><span id="line-60">import org.apiguardian.api.API;</span>
+<span class="source-line-no">061</span><span id="line-61">import org.tquadrat.foundation.annotation.ClassVersion;</span>
+<span class="source-line-no">062</span><span id="line-62">import org.tquadrat.foundation.inifile.INIFile;</span>
+<span class="source-line-no">063</span><span id="line-63">import org.tquadrat.foundation.lang.Lazy;</span>
+<span class="source-line-no">064</span><span id="line-64">import org.tquadrat.foundation.lang.StringConverter;</span>
+<span class="source-line-no">065</span><span id="line-65">import org.tquadrat.foundation.util.stringconverter.PathStringConverter;</span>
+<span class="source-line-no">066</span><span id="line-66"></span>
+<span class="source-line-no">067</span><span id="line-67">/**</span>
+<span class="source-line-no">068</span><span id="line-68"> *  The implementation for</span>
+<span class="source-line-no">069</span><span id="line-69"> *  {@link INIFile}.</span>
+<span class="source-line-no">070</span><span id="line-70"> *</span>
+<span class="source-line-no">071</span><span id="line-71"> *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org</span>
+<span class="source-line-no">072</span><span id="line-72"> *  @version $Id: INIFileImpl.java 1127 2024-04-04 20:21:25Z tquadrat $</span>
+<span class="source-line-no">073</span><span id="line-73"> *</span>
+<span class="source-line-no">074</span><span id="line-74"> *  @UMLGraph.link</span>
+<span class="source-line-no">075</span><span id="line-75"> *  @since 0.1.0</span>
+<span class="source-line-no">076</span><span id="line-76"> */</span>
+<span class="source-line-no">077</span><span id="line-77">@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1127 2024-04-04 20:21:25Z tquadrat $" )</span>
+<span class="source-line-no">078</span><span id="line-78">@API( status = INTERNAL, since = "0.1.0" )</span>
+<span class="source-line-no">079</span><span id="line-79">public final class INIFileImpl implements INIFile</span>
+<span class="source-line-no">080</span><span id="line-80">{</span>
+<span class="source-line-no">081</span><span id="line-81">        /*------------*\</span>
+<span class="source-line-no">082</span><span id="line-82">    ====** Attributes **=======================================================</span>
+<span class="source-line-no">083</span><span id="line-83">        \*------------*/</span>
+<span class="source-line-no">084</span><span id="line-84">    /**</span>
+<span class="source-line-no">085</span><span id="line-85">     *  The clock that is used to determine the last update. This is changed</span>
+<span class="source-line-no">086</span><span id="line-86">     *  only for testing purposes, the default is</span>
+<span class="source-line-no">087</span><span id="line-87">     *  {@link Clock#systemDefaultZone()}.</span>
+<span class="source-line-no">088</span><span id="line-88">     */</span>
+<span class="source-line-no">089</span><span id="line-89">    private Clock m_Clock = Clock.systemDefaultZone();</span>
+<span class="source-line-no">090</span><span id="line-90"></span>
+<span class="source-line-no">091</span><span id="line-91">    /**</span>
+<span class="source-line-no">092</span><span id="line-92">     *  The comment for this file.</span>
+<span class="source-line-no">093</span><span id="line-93">     */</span>
+<span class="source-line-no">094</span><span id="line-94">    @SuppressWarnings( "StringBufferField" )</span>
+<span class="source-line-no">095</span><span id="line-95">    private final StringBuilder m_Comment = new StringBuilder();</span>
+<span class="source-line-no">096</span><span id="line-96"></span>
+<span class="source-line-no">097</span><span id="line-97">    /**</span>
+<span class="source-line-no">098</span><span id="line-98">     *  The reference to file that is used to persist the contents.</span>
+<span class="source-line-no">099</span><span id="line-99">     */</span>
+<span class="source-line-no">100</span><span id="line-100">    private final Path m_File;</span>
+<span class="source-line-no">101</span><span id="line-101"></span>
+<span class="source-line-no">102</span><span id="line-102">    /**</span>
+<span class="source-line-no">103</span><span id="line-103">     *  The groups.</span>
+<span class="source-line-no">104</span><span id="line-104">     */</span>
+<span class="source-line-no">105</span><span id="line-105">    private final Map&lt;String,Group&gt; m_Groups = new LinkedHashMap&lt;&gt;();</span>
+<span class="source-line-no">106</span><span id="line-106"></span>
+<span class="source-line-no">107</span><span id="line-107">    /**</span>
+<span class="source-line-no">108</span><span id="line-108">     *  The time when the file was last updated.</span>
+<span class="source-line-no">109</span><span id="line-109">     */</span>
+<span class="source-line-no">110</span><span id="line-110">    private Instant m_LastUpdated;</span>
+<span class="source-line-no">111</span><span id="line-111"></span>
+<span class="source-line-no">112</span><span id="line-112">        /*------------------------*\</span>
+<span class="source-line-no">113</span><span id="line-113">    ====** Static Initialisations **===========================================</span>
+<span class="source-line-no">114</span><span id="line-114">        \*------------------------*/</span>
+<span class="source-line-no">115</span><span id="line-115">    /**</span>
+<span class="source-line-no">116</span><span id="line-116">     *  The format String that is used for the last updated comment.</span>
+<span class="source-line-no">117</span><span id="line-117">     */</span>
+<span class="source-line-no">118</span><span id="line-118">    private static final String LAST_UPDATED_FORMAT;</span>
+<span class="source-line-no">119</span><span id="line-119"></span>
+<span class="source-line-no">120</span><span id="line-120">    /**</span>
+<span class="source-line-no">121</span><span id="line-121">     *  The pattern that is used for the last updated comment.</span>
+<span class="source-line-no">122</span><span id="line-122">     */</span>
+<span class="source-line-no">123</span><span id="line-123">    private static final Pattern LAST_UPDATED_PATTERN;</span>
+<span class="source-line-no">124</span><span id="line-124"></span>
+<span class="source-line-no">125</span><span id="line-125">    static</span>
+<span class="source-line-no">126</span><span id="line-126">    {</span>
+<span class="source-line-no">127</span><span id="line-127">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">128</span><span id="line-128">        final var s = "# Last Update: ";</span>
+<span class="source-line-no">129</span><span id="line-129">        LAST_UPDATED_FORMAT = format( "%s%%s", s );</span>
+<span class="source-line-no">130</span><span id="line-130"></span>
+<span class="source-line-no">131</span><span id="line-131">        try</span>
+<span class="source-line-no">132</span><span id="line-132">        {</span>
+<span class="source-line-no">133</span><span id="line-133">            LAST_UPDATED_PATTERN = compile( format( "%s(.*)$", s ) );</span>
+<span class="source-line-no">134</span><span id="line-134">        }</span>
+<span class="source-line-no">135</span><span id="line-135">        catch( final PatternSyntaxException e )</span>
+<span class="source-line-no">136</span><span id="line-136">        {</span>
+<span class="source-line-no">137</span><span id="line-137">            throw new ExceptionInInitializerError( e );</span>
+<span class="source-line-no">138</span><span id="line-138">        }</span>
+<span class="source-line-no">139</span><span id="line-139">    }</span>
+<span class="source-line-no">140</span><span id="line-140"></span>
+<span class="source-line-no">141</span><span id="line-141">        /*--------------*\</span>
+<span class="source-line-no">142</span><span id="line-142">    ====** Constructors **=====================================================</span>
+<span class="source-line-no">143</span><span id="line-143">        \*--------------*/</span>
+<span class="source-line-no">144</span><span id="line-144">    /**</span>
+<span class="source-line-no">145</span><span id="line-145">     *  &lt;p&gt;{@summary Creates a new instance of {@code INIFileImpl}.}&lt;/p&gt;</span>
+<span class="source-line-no">146</span><span id="line-146">     *  &lt;p&gt;The constructor does not check whether the &lt;i&gt;file&lt;/i&gt; argument is</span>
+<span class="source-line-no">147</span><span id="line-147">     *  {@code null}; this has to be done by the factory methods</span>
+<span class="source-line-no">148</span><span id="line-148">     *  {@link #create(Path)}</span>
+<span class="source-line-no">149</span><span id="line-149">     *  and</span>
+<span class="source-line-no">150</span><span id="line-150">     *  {@link #open(Path)}.&lt;/p&gt;</span>
+<span class="source-line-no">151</span><span id="line-151">     *  &lt;p&gt;But that this constructor is public allows simpler tests.&lt;/p&gt;</span>
+<span class="source-line-no">152</span><span id="line-152">     *</span>
+<span class="source-line-no">153</span><span id="line-153">     *  @param  file    The file that holds the contents.</span>
+<span class="source-line-no">154</span><span id="line-154">     */</span>
+<span class="source-line-no">155</span><span id="line-155">    private INIFileImpl( final Path file )</span>
+<span class="source-line-no">156</span><span id="line-156">    {</span>
+<span class="source-line-no">157</span><span id="line-157">        m_File = file;</span>
+<span class="source-line-no">158</span><span id="line-158">        m_LastUpdated = Instant.now( m_Clock );</span>
+<span class="source-line-no">159</span><span id="line-159">    }   //  INIFileImpl()</span>
+<span class="source-line-no">160</span><span id="line-160"></span>
+<span class="source-line-no">161</span><span id="line-161">        /*---------*\</span>
+<span class="source-line-no">162</span><span id="line-162">    ====** Methods **==========================================================</span>
+<span class="source-line-no">163</span><span id="line-163">        \*---------*/</span>
+<span class="source-line-no">164</span><span id="line-164">    /**</span>
+<span class="source-line-no">165</span><span id="line-165">     * {@inheritDoc}</span>
+<span class="source-line-no">166</span><span id="line-166">     */</span>
+<span class="source-line-no">167</span><span id="line-167">    @Override</span>
+<span class="source-line-no">168</span><span id="line-168">    public final void addComment( final String comment )</span>
+<span class="source-line-no">169</span><span id="line-169">    {</span>
+<span class="source-line-no">170</span><span id="line-170">        if( isNotEmptyOrBlank( comment ) ) m_Comment.append( comment );</span>
+<span class="source-line-no">171</span><span id="line-171">    }   //  addComment()</span>
+<span class="source-line-no">172</span><span id="line-172"></span>
+<span class="source-line-no">173</span><span id="line-173">    /**</span>
+<span class="source-line-no">174</span><span id="line-174">     * {@inheritDoc}</span>
+<span class="source-line-no">175</span><span id="line-175">     */</span>
+<span class="source-line-no">176</span><span id="line-176">    @Override</span>
+<span class="source-line-no">177</span><span id="line-177">    public final void addComment( final String group, final String comment )</span>
+<span class="source-line-no">178</span><span id="line-178">    {</span>
+<span class="source-line-no">179</span><span id="line-179">        requireValidArgument( group, "group", Group::checkGroupNameCandidate );</span>
+<span class="source-line-no">180</span><span id="line-180">        if( isNotEmptyOrBlank( comment ) )</span>
+<span class="source-line-no">181</span><span id="line-181">        {</span>
+<span class="source-line-no">182</span><span id="line-182">            @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">183</span><span id="line-183">            final var g = m_Groups.computeIfAbsent( group, this::createGroup );</span>
+<span class="source-line-no">184</span><span id="line-184">            g.addComment( comment );</span>
+<span class="source-line-no">185</span><span id="line-185">        }</span>
+<span class="source-line-no">186</span><span id="line-186">    }   //  addComment()</span>
+<span class="source-line-no">187</span><span id="line-187"></span>
+<span class="source-line-no">188</span><span id="line-188">    /**</span>
+<span class="source-line-no">189</span><span id="line-189">     * {@inheritDoc}</span>
+<span class="source-line-no">190</span><span id="line-190">     */</span>
+<span class="source-line-no">191</span><span id="line-191">    @Override</span>
+<span class="source-line-no">192</span><span id="line-192">    public final void addComment( final String group, final String key, final String comment )</span>
+<span class="source-line-no">193</span><span id="line-193">    {</span>
+<span class="source-line-no">194</span><span id="line-194">        requireValidArgument( group, "group", Group::checkGroupNameCandidate );</span>
+<span class="source-line-no">195</span><span id="line-195">        requireValidArgument( key, "key", Value::checkKeyCandidate );</span>
+<span class="source-line-no">196</span><span id="line-196">        if( isNotEmptyOrBlank( comment ) )</span>
+<span class="source-line-no">197</span><span id="line-197">        {</span>
+<span class="source-line-no">198</span><span id="line-198">            @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">199</span><span id="line-199">            final var g = m_Groups.computeIfAbsent( group, this::createGroup );</span>
+<span class="source-line-no">200</span><span id="line-200">            g.addComment( key, comment );</span>
+<span class="source-line-no">201</span><span id="line-201">        }</span>
+<span class="source-line-no">202</span><span id="line-202">    }   //  addComment()</span>
+<span class="source-line-no">203</span><span id="line-203"></span>
+<span class="source-line-no">204</span><span id="line-204">    /**</span>
+<span class="source-line-no">205</span><span id="line-205">     *  &lt;p&gt;{@summary Breaks the given String into chunks of</span>
+<span class="source-line-no">206</span><span id="line-206">     *  {@value #LINE_LENGTH}</span>
+<span class="source-line-no">207</span><span id="line-207">     *  characters.} All but the last chunk will end with a backslash</span>
+<span class="source-line-no">208</span><span id="line-208">     *  (&amp;quot;\&amp;quot;).&lt;/p&gt;</span>
+<span class="source-line-no">209</span><span id="line-209">     *</span>
+<span class="source-line-no">210</span><span id="line-210">     *  @param  s   The String to split.</span>
+<span class="source-line-no">211</span><span id="line-211">     *  @return The stream with the chunks.</span>
+<span class="source-line-no">212</span><span id="line-212">     */</span>
+<span class="source-line-no">213</span><span id="line-213">    public static final Stream&lt;String&gt; breakString( final String s )</span>
+<span class="source-line-no">214</span><span id="line-214">    {</span>
+<span class="source-line-no">215</span><span id="line-215">        var remainder = requireNonNullArgument( s, "s" ).replaceAll( "\n", "\\\\n" );</span>
+<span class="source-line-no">216</span><span id="line-216">        final var builder = Stream.&lt;String&gt;builder();</span>
+<span class="source-line-no">217</span><span id="line-217">        while( remainder.length() &gt; LINE_LENGTH )</span>
+<span class="source-line-no">218</span><span id="line-218">        {</span>
+<span class="source-line-no">219</span><span id="line-219">            //noinspection ConstantExpression</span>
+<span class="source-line-no">220</span><span id="line-220">            builder.add( format( "%s\\", remainder.substring( 0, LINE_LENGTH ) ) );</span>
+<span class="source-line-no">221</span><span id="line-221">            remainder = remainder.substring( LINE_LENGTH );</span>
+<span class="source-line-no">222</span><span id="line-222">        }</span>
+<span class="source-line-no">223</span><span id="line-223">        builder.add( remainder );</span>
+<span class="source-line-no">224</span><span id="line-224"></span>
+<span class="source-line-no">225</span><span id="line-225">        final var retValue = builder.build();</span>
+<span class="source-line-no">226</span><span id="line-226"></span>
+<span class="source-line-no">227</span><span id="line-227">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">228</span><span id="line-228">        return retValue;</span>
+<span class="source-line-no">229</span><span id="line-229">    }   //  breakString()</span>
+<span class="source-line-no">230</span><span id="line-230"></span>
+<span class="source-line-no">231</span><span id="line-231">    /**</span>
+<span class="source-line-no">232</span><span id="line-232">     *  &lt;p&gt;{@summary Creates an empty INI file.} If the file already exists, it</span>
+<span class="source-line-no">233</span><span id="line-233">     *  will be overwritten without notice.&lt;/p&gt;</span>
+<span class="source-line-no">234</span><span id="line-234">     *  &lt;p&gt;The given file is used to store the value on a call to</span>
+<span class="source-line-no">235</span><span id="line-235">     *  {@link #save()}.&lt;/p&gt;</span>
+<span class="source-line-no">236</span><span id="line-236">     *</span>
+<span class="source-line-no">237</span><span id="line-237">     *  @param  file    The file.</span>
+<span class="source-line-no">238</span><span id="line-238">     *  @return The new instance.</span>
+<span class="source-line-no">239</span><span id="line-239">     *  @throws IOException The file cannot be created.</span>
+<span class="source-line-no">240</span><span id="line-240">     */</span>
+<span class="source-line-no">241</span><span id="line-241">    public static final INIFile create( final Path file ) throws IOException</span>
+<span class="source-line-no">242</span><span id="line-242">    {</span>
+<span class="source-line-no">243</span><span id="line-243">        final var retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );</span>
+<span class="source-line-no">244</span><span id="line-244">        retValue.save();</span>
+<span class="source-line-no">245</span><span id="line-245"></span>
+<span class="source-line-no">246</span><span id="line-246">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">247</span><span id="line-247">        return retValue;</span>
+<span class="source-line-no">248</span><span id="line-248">    }   //  create()</span>
+<span class="source-line-no">249</span><span id="line-249"></span>
+<span class="source-line-no">250</span><span id="line-250">    /**</span>
+<span class="source-line-no">251</span><span id="line-251">     *  Creates a new instance of</span>
+<span class="source-line-no">252</span><span id="line-252">     *  {@link Group}</span>
+<span class="source-line-no">253</span><span id="line-253">     *  for the given name.</span>
+<span class="source-line-no">254</span><span id="line-254">     *</span>
+<span class="source-line-no">255</span><span id="line-255">     *  @param  group   The name of the group.</span>
+<span class="source-line-no">256</span><span id="line-256">     *  @return The new instance.</span>
+<span class="source-line-no">257</span><span id="line-257">     */</span>
+<span class="source-line-no">258</span><span id="line-258">    private final Group createGroup( final String group )</span>
+<span class="source-line-no">259</span><span id="line-259">    {</span>
+<span class="source-line-no">260</span><span id="line-260">        /*</span>
+<span class="source-line-no">261</span><span id="line-261">         * The argument check will be done by the constructor itself.</span>
+<span class="source-line-no">262</span><span id="line-262">         */</span>
+<span class="source-line-no">263</span><span id="line-263">        return new Group( group );</span>
+<span class="source-line-no">264</span><span id="line-264">    }   //  createGroup()</span>
+<span class="source-line-no">265</span><span id="line-265"></span>
+<span class="source-line-no">266</span><span id="line-266">    /**</span>
+<span class="source-line-no">267</span><span id="line-267">     *  Dumps the contents to a String.</span>
+<span class="source-line-no">268</span><span id="line-268">     *</span>
+<span class="source-line-no">269</span><span id="line-269">     *  @return The contents in a String.</span>
+<span class="source-line-no">270</span><span id="line-270">     */</span>
+<span class="source-line-no">271</span><span id="line-271">    @SuppressWarnings( "PublicMethodNotExposedInInterface" )</span>
+<span class="source-line-no">272</span><span id="line-272">    public final String dumpContents()</span>
+<span class="source-line-no">273</span><span id="line-273">    {</span>
+<span class="source-line-no">274</span><span id="line-274">        final var joiner = new StringJoiner( "\n", EMPTY_STRING, "\n" );</span>
+<span class="source-line-no">275</span><span id="line-275">        if( !m_Comment.isEmpty() )</span>
+<span class="source-line-no">276</span><span id="line-276">        {</span>
+<span class="source-line-no">277</span><span id="line-277">            splitComment( m_Comment ).forEach( joiner::add );</span>
+<span class="source-line-no">278</span><span id="line-278">        }</span>
+<span class="source-line-no">279</span><span id="line-279">        joiner.add( format( LAST_UPDATED_FORMAT, m_LastUpdated.toString() ) );</span>
+<span class="source-line-no">280</span><span id="line-280">        final var retValue = m_Groups.values()</span>
+<span class="source-line-no">281</span><span id="line-281">            .stream()</span>
+<span class="source-line-no">282</span><span id="line-282">            .map( Group::toString )</span>
+<span class="source-line-no">283</span><span id="line-283">            .collect( joining( EMPTY_STRING, joiner.toString(), EMPTY_STRING ) );</span>
+<span class="source-line-no">284</span><span id="line-284"></span>
+<span class="source-line-no">285</span><span id="line-285">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">286</span><span id="line-286">        return retValue;</span>
+<span class="source-line-no">287</span><span id="line-287">    }   //  dumpContents()</span>
+<span class="source-line-no">288</span><span id="line-288"></span>
+<span class="source-line-no">289</span><span id="line-289">    /**</span>
+<span class="source-line-no">290</span><span id="line-290">     *  {@inheritDoc}</span>
+<span class="source-line-no">291</span><span id="line-291">     */</span>
+<span class="source-line-no">292</span><span id="line-292">    @Override</span>
+<span class="source-line-no">293</span><span id="line-293">    public final Optional&lt;String&gt; getValue( final String group, final String key )</span>
+<span class="source-line-no">294</span><span id="line-294">    {</span>
+<span class="source-line-no">295</span><span id="line-295">        Optional&lt;String&gt; retValue = Optional.empty();</span>
+<span class="source-line-no">296</span><span id="line-296">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">297</span><span id="line-297">        final var g = m_Groups.get( requireValidArgument( group, "group", Group::checkGroupNameCandidate ) );</span>
+<span class="source-line-no">298</span><span id="line-298">        if( nonNull( g ) )</span>
+<span class="source-line-no">299</span><span id="line-299">        {</span>
+<span class="source-line-no">300</span><span id="line-300">            retValue = g.getValue( key )</span>
+<span class="source-line-no">301</span><span id="line-301">                .map( Value::getValue );</span>
+<span class="source-line-no">302</span><span id="line-302">        }</span>
+<span class="source-line-no">303</span><span id="line-303"></span>
+<span class="source-line-no">304</span><span id="line-304">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">305</span><span id="line-305">        return retValue;</span>
+<span class="source-line-no">306</span><span id="line-306">    }   //  getValue()</span>
+<span class="source-line-no">307</span><span id="line-307"></span>
+<span class="source-line-no">308</span><span id="line-308">    /**</span>
+<span class="source-line-no">309</span><span id="line-309">     *  {@inheritDoc}</span>
+<span class="source-line-no">310</span><span id="line-310">     */</span>
+<span class="source-line-no">311</span><span id="line-311">    @Override</span>
+<span class="source-line-no">312</span><span id="line-312">    public final &lt;T&gt; Optional&lt;T&gt; getValue( final String group, final String key, final StringConverter&lt;? extends T&gt; stringConverter )</span>
+<span class="source-line-no">313</span><span id="line-313">    {</span>
+<span class="source-line-no">314</span><span id="line-314">        requireNonNullArgument( stringConverter, "stringConverter" );</span>
+<span class="source-line-no">315</span><span id="line-315">        final Optional&lt;T&gt; retValue = getValue( group, key )</span>
+<span class="source-line-no">316</span><span id="line-316">            .map( stringConverter::fromString );</span>
+<span class="source-line-no">317</span><span id="line-317"></span>
+<span class="source-line-no">318</span><span id="line-318">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">319</span><span id="line-319">        return retValue;</span>
+<span class="source-line-no">320</span><span id="line-320">    }   //  getValue()</span>
+<span class="source-line-no">321</span><span id="line-321"></span>
+<span class="source-line-no">322</span><span id="line-322">    /**</span>
+<span class="source-line-no">323</span><span id="line-323">     *  {@inheritDoc}</span>
+<span class="source-line-no">324</span><span id="line-324">     */</span>
+<span class="source-line-no">325</span><span id="line-325">    @Override</span>
+<span class="source-line-no">326</span><span id="line-326">    public final boolean hasGroup( final String group )</span>
+<span class="source-line-no">327</span><span id="line-327">    {</span>
+<span class="source-line-no">328</span><span id="line-328">        return isNotEmptyOrBlank( group ) &amp;&amp; checkGroupNameCandidate( group ) &amp;&amp; m_Groups.containsKey( group );</span>
+<span class="source-line-no">329</span><span id="line-329">    }   //  hasGroup()</span>
+<span class="source-line-no">330</span><span id="line-330"></span>
+<span class="source-line-no">331</span><span id="line-331">    /**</span>
+<span class="source-line-no">332</span><span id="line-332">     *  {@inheritDoc}</span>
+<span class="source-line-no">333</span><span id="line-333">     */</span>
+<span class="source-line-no">334</span><span id="line-334">    @Override</span>
+<span class="source-line-no">335</span><span id="line-335">    public final boolean hasValue( final String group, final String key )</span>
+<span class="source-line-no">336</span><span id="line-336">    {</span>
+<span class="source-line-no">337</span><span id="line-337">        final var retValue = isNotEmptyOrBlank( group )</span>
+<span class="source-line-no">338</span><span id="line-338">            &amp;&amp; isNotEmptyOrBlank( key )</span>
+<span class="source-line-no">339</span><span id="line-339">            &amp;&amp; checkGroupNameCandidate( group )</span>
+<span class="source-line-no">340</span><span id="line-340">            &amp;&amp; checkKeyCandidate( key )</span>
+<span class="source-line-no">341</span><span id="line-341">            &amp;&amp; getValue( group, key ).isPresent();</span>
+<span class="source-line-no">342</span><span id="line-342"></span>
+<span class="source-line-no">343</span><span id="line-343">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">344</span><span id="line-344">        return retValue;</span>
+<span class="source-line-no">345</span><span id="line-345">    }   //  hasValue()</span>
+<span class="source-line-no">346</span><span id="line-346"></span>
+<span class="source-line-no">347</span><span id="line-347">    /**</span>
+<span class="source-line-no">348</span><span id="line-348">     *  Join all lines that end with a backslash with the next line on the</span>
+<span class="source-line-no">349</span><span id="line-349">     *  list.</span>
+<span class="source-line-no">350</span><span id="line-350">     *</span>
+<span class="source-line-no">351</span><span id="line-351">     *  @param  lines   The input lines.</span>
+<span class="source-line-no">352</span><span id="line-352">     *  @return The output.</span>
+<span class="source-line-no">353</span><span id="line-353">     */</span>
+<span class="source-line-no">354</span><span id="line-354">    private final List&lt;String&gt; joinLines( final Iterable&lt;String&gt; lines )</span>
+<span class="source-line-no">355</span><span id="line-355">    {</span>
+<span class="source-line-no">356</span><span id="line-356">        final List&lt;String&gt; retValue = new ArrayList&lt;&gt;();</span>
+<span class="source-line-no">357</span><span id="line-357"></span>
+<span class="source-line-no">358</span><span id="line-358">        final var buffer = new StringBuilder();</span>
+<span class="source-line-no">359</span><span id="line-359">        for( final var line : lines )</span>
+<span class="source-line-no">360</span><span id="line-360">        {</span>
+<span class="source-line-no">361</span><span id="line-361">            if( line.endsWith( "\\" ) )</span>
+<span class="source-line-no">362</span><span id="line-362">            {</span>
+<span class="source-line-no">363</span><span id="line-363">                buffer.append( line );</span>
+<span class="source-line-no">364</span><span id="line-364">                buffer.setLength( buffer.length() - 1 );</span>
+<span class="source-line-no">365</span><span id="line-365">            }</span>
+<span class="source-line-no">366</span><span id="line-366">            else if( buffer.isEmpty() )</span>
+<span class="source-line-no">367</span><span id="line-367">            {</span>
+<span class="source-line-no">368</span><span id="line-368">                retValue.add( line );</span>
+<span class="source-line-no">369</span><span id="line-369">            }</span>
+<span class="source-line-no">370</span><span id="line-370">            else</span>
+<span class="source-line-no">371</span><span id="line-371">            {</span>
+<span class="source-line-no">372</span><span id="line-372">                buffer.append( line );</span>
+<span class="source-line-no">373</span><span id="line-373">                retValue.add( buffer.toString() );</span>
+<span class="source-line-no">374</span><span id="line-374">                buffer.setLength( 0 );</span>
+<span class="source-line-no">375</span><span id="line-375">            }</span>
+<span class="source-line-no">376</span><span id="line-376">        }</span>
+<span class="source-line-no">377</span><span id="line-377">        if( !buffer.isEmpty() ) retValue.add( buffer.toString() );</span>
+<span class="source-line-no">378</span><span id="line-378"></span>
+<span class="source-line-no">379</span><span id="line-379">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">380</span><span id="line-380">        return retValue;</span>
+<span class="source-line-no">381</span><span id="line-381">    }   //  joinLines()</span>
+<span class="source-line-no">382</span><span id="line-382"></span>
+<span class="source-line-no">383</span><span id="line-383">    /**</span>
+<span class="source-line-no">384</span><span id="line-384">     *  {@inheritDoc}</span>
+<span class="source-line-no">385</span><span id="line-385">     */</span>
+<span class="source-line-no">386</span><span id="line-386">    @Override</span>
+<span class="source-line-no">387</span><span id="line-387">    public final Collection&lt;Entry&gt; listEntries()</span>
+<span class="source-line-no">388</span><span id="line-388">    {</span>
+<span class="source-line-no">389</span><span id="line-389">        final List&lt;Entry&gt; buffer = new ArrayList&lt;&gt;();</span>
+<span class="source-line-no">390</span><span id="line-390">        for( final var group : m_Groups.values() )</span>
+<span class="source-line-no">391</span><span id="line-391">        {</span>
+<span class="source-line-no">392</span><span id="line-392">            for( final var key : group.getKeys() )</span>
+<span class="source-line-no">393</span><span id="line-393">            {</span>
+<span class="source-line-no">394</span><span id="line-394">                final var value = group.getValue( key );</span>
+<span class="source-line-no">395</span><span id="line-395">                buffer.add( new Entry( group.getName(), key, value.map( Value::getValue ).orElse( null ) ) );</span>
+<span class="source-line-no">396</span><span id="line-396">            }</span>
+<span class="source-line-no">397</span><span id="line-397">        }</span>
+<span class="source-line-no">398</span><span id="line-398">        buffer.sort( naturalOrder() );</span>
+<span class="source-line-no">399</span><span id="line-399">        final var retValue = List.copyOf( buffer );</span>
+<span class="source-line-no">400</span><span id="line-400"></span>
+<span class="source-line-no">401</span><span id="line-401">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">402</span><span id="line-402">        return retValue;</span>
+<span class="source-line-no">403</span><span id="line-403">    }   //  listEntries()</span>
+<span class="source-line-no">404</span><span id="line-404"></span>
+<span class="source-line-no">405</span><span id="line-405">    /**</span>
+<span class="source-line-no">406</span><span id="line-406">     *  Opens the given INI file and reads its contents. If the file does not</span>
+<span class="source-line-no">407</span><span id="line-407">     *  exist yet, a new, empty file will be created.</span>
+<span class="source-line-no">408</span><span id="line-408">     *</span>
+<span class="source-line-no">409</span><span id="line-409">     *  @param  file    The file.</span>
+<span class="source-line-no">410</span><span id="line-410">     *  @return The new instance.</span>
+<span class="source-line-no">411</span><span id="line-411">     *  @throws IOException A problem occurred when reading the file.</span>
+<span class="source-line-no">412</span><span id="line-412">     */</span>
+<span class="source-line-no">413</span><span id="line-413">    public static final INIFile open( final Path file ) throws IOException</span>
+<span class="source-line-no">414</span><span id="line-414">    {</span>
+<span class="source-line-no">415</span><span id="line-415">        final var retValue = new INIFileImpl( file );</span>
+<span class="source-line-no">416</span><span id="line-416">        retValue.parse();</span>
+<span class="source-line-no">417</span><span id="line-417"></span>
+<span class="source-line-no">418</span><span id="line-418">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">419</span><span id="line-419">        return retValue;</span>
+<span class="source-line-no">420</span><span id="line-420">    }   //  open()</span>
+<span class="source-line-no">421</span><span id="line-421"></span>
+<span class="source-line-no">422</span><span id="line-422">    /**</span>
+<span class="source-line-no">423</span><span id="line-423">     *  Loads the content from the file into memory.</span>
+<span class="source-line-no">424</span><span id="line-424">     *</span>
+<span class="source-line-no">425</span><span id="line-425">     *  @throws IOException A problem occurred when reading the file.</span>
+<span class="source-line-no">426</span><span id="line-426">     */</span>
+<span class="source-line-no">427</span><span id="line-427">    private final void parse() throws IOException</span>
+<span class="source-line-no">428</span><span id="line-428">    {</span>
+<span class="source-line-no">429</span><span id="line-429">        if( exists( m_File ) )</span>
+<span class="source-line-no">430</span><span id="line-430">        {</span>
+<span class="source-line-no">431</span><span id="line-431">            final var lines = joinLines( readAllLines( m_File, UTF8 ) );</span>
+<span class="source-line-no">432</span><span id="line-432">            parse( lines );</span>
+<span class="source-line-no">433</span><span id="line-433">        }</span>
+<span class="source-line-no">434</span><span id="line-434">    }   //  parse()</span>
+<span class="source-line-no">435</span><span id="line-435"></span>
+<span class="source-line-no">436</span><span id="line-436">    /**</span>
+<span class="source-line-no">437</span><span id="line-437">     *  Parses the given lines to the INI file contents.</span>
+<span class="source-line-no">438</span><span id="line-438">     *</span>
+<span class="source-line-no">439</span><span id="line-439">     *  @param  lines   The joined lines; the list does not contain any</span>
+<span class="source-line-no">440</span><span id="line-440">     *      multi-line constructs.</span>
+<span class="source-line-no">441</span><span id="line-441">     *  @throws IOException The structure is invalid.</span>
+<span class="source-line-no">442</span><span id="line-442">     */</span>
+<span class="source-line-no">443</span><span id="line-443">    @SuppressWarnings( {"PublicMethodNotExposedInInterface", "OverlyComplexMethod"} )</span>
+<span class="source-line-no">444</span><span id="line-444">    public final void parse( final List&lt;String&gt; lines ) throws IOException</span>
+<span class="source-line-no">445</span><span id="line-445">    {</span>
+<span class="source-line-no">446</span><span id="line-446">        Group currentGroup = null;</span>
+<span class="source-line-no">447</span><span id="line-447">        final Collection&lt;String&gt; commentBuffer = new ArrayList&lt;&gt;();</span>
+<span class="source-line-no">448</span><span id="line-448">        m_Comment.setLength( 0 );</span>
+<span class="source-line-no">449</span><span id="line-449">        var commentsToBuffer = false;</span>
+<span class="source-line-no">450</span><span id="line-450"></span>
+<span class="source-line-no">451</span><span id="line-451">        final var errorMessage = Lazy.use( () -&gt; "'%s' has invalid structure".formatted( PathStringConverter.INSTANCE.toString( m_File ) ) );</span>
+<span class="source-line-no">452</span><span id="line-452"></span>
+<span class="source-line-no">453</span><span id="line-453">        final var groupPattern = compile( "\\[(.*)]" );</span>
+<span class="source-line-no">454</span><span id="line-454">        ScanLoop: for( final var line : requireNonNullArgument( lines, "lines" ) )</span>
+<span class="source-line-no">455</span><span id="line-455">        {</span>
+<span class="source-line-no">456</span><span id="line-456">            var matcher = LAST_UPDATED_PATTERN.matcher( line );</span>
+<span class="source-line-no">457</span><span id="line-457">            if( matcher.matches() )</span>
+<span class="source-line-no">458</span><span id="line-458">            {</span>
+<span class="source-line-no">459</span><span id="line-459">                m_LastUpdated = Instant.parse( matcher.group( 1 ) );</span>
+<span class="source-line-no">460</span><span id="line-460">                continue ScanLoop;</span>
+<span class="source-line-no">461</span><span id="line-461">            }</span>
+<span class="source-line-no">462</span><span id="line-462"></span>
+<span class="source-line-no">463</span><span id="line-463">            if( line.startsWith( "#" ) )</span>
+<span class="source-line-no">464</span><span id="line-464">            {</span>
+<span class="source-line-no">465</span><span id="line-465">                //---* Comment line found *------------------------------------</span>
+<span class="source-line-no">466</span><span id="line-466">                @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">467</span><span id="line-467">                final var s = (line.length() &gt; 1 ? line.substring( 1 ).trim() : EMPTY_STRING);</span>
+<span class="source-line-no">468</span><span id="line-468">                if( commentsToBuffer )</span>
+<span class="source-line-no">469</span><span id="line-469">                {</span>
+<span class="source-line-no">470</span><span id="line-470">                    commentBuffer.add( s );</span>
+<span class="source-line-no">471</span><span id="line-471">                }</span>
+<span class="source-line-no">472</span><span id="line-472">                else</span>
+<span class="source-line-no">473</span><span id="line-473">                {</span>
+<span class="source-line-no">474</span><span id="line-474">                    m_Comment.append( s );</span>
+<span class="source-line-no">475</span><span id="line-475">                }</span>
+<span class="source-line-no">476</span><span id="line-476">                continue ScanLoop;</span>
+<span class="source-line-no">477</span><span id="line-477">            }</span>
+<span class="source-line-no">478</span><span id="line-478"></span>
+<span class="source-line-no">479</span><span id="line-479">            matcher = groupPattern.matcher( line );</span>
+<span class="source-line-no">480</span><span id="line-480">            if( matcher.matches() )</span>
+<span class="source-line-no">481</span><span id="line-481">            {</span>
+<span class="source-line-no">482</span><span id="line-482">                final var name = matcher.group( 1 );</span>
+<span class="source-line-no">483</span><span id="line-483">                currentGroup = createGroup( name );</span>
+<span class="source-line-no">484</span><span id="line-484">                m_Groups.put( name, currentGroup );</span>
+<span class="source-line-no">485</span><span id="line-485">                commentBuffer.forEach( currentGroup::addComment );</span>
+<span class="source-line-no">486</span><span id="line-486">                commentBuffer.clear();</span>
+<span class="source-line-no">487</span><span id="line-487">                continue ScanLoop;</span>
+<span class="source-line-no">488</span><span id="line-488">            }</span>
+<span class="source-line-no">489</span><span id="line-489"></span>
+<span class="source-line-no">490</span><span id="line-490">            if( line.isBlank() )</span>
+<span class="source-line-no">491</span><span id="line-491">            {</span>
+<span class="source-line-no">492</span><span id="line-492">                commentsToBuffer = true;</span>
+<span class="source-line-no">493</span><span id="line-493">                continue ScanLoop;</span>
+<span class="source-line-no">494</span><span id="line-494">            }</span>
+<span class="source-line-no">495</span><span id="line-495"></span>
+<span class="source-line-no">496</span><span id="line-496">            if( isNull( currentGroup) ) throw new IOException( errorMessage.get() );</span>
+<span class="source-line-no">497</span><span id="line-497">            final var pos = line.indexOf( '=' );</span>
+<span class="source-line-no">498</span><span id="line-498">            if( pos &lt; 1 ) throw new IOException( errorMessage.get() );</span>
+<span class="source-line-no">499</span><span id="line-499">            final var key = line.substring( 0, pos ).trim();</span>
+<span class="source-line-no">500</span><span id="line-500">            @SuppressWarnings( "UnreachableCode" )</span>
+<span class="source-line-no">501</span><span id="line-501">            final var data = line.length() &gt; pos ? line.substring( pos + 1 ).trim().translateEscapes() : EMPTY_STRING;</span>
+<span class="source-line-no">502</span><span id="line-502">            final var value = currentGroup.setValue( key, data );</span>
+<span class="source-line-no">503</span><span id="line-503">            commentBuffer.forEach( value::addComment );</span>
+<span class="source-line-no">504</span><span id="line-504">            commentBuffer.clear();</span>
+<span class="source-line-no">505</span><span id="line-505">        }   //  ScanLoop:</span>
+<span class="source-line-no">506</span><span id="line-506">    }   //  parse()</span>
+<span class="source-line-no">507</span><span id="line-507"></span>
+<span class="source-line-no">508</span><span id="line-508">    /**</span>
+<span class="source-line-no">509</span><span id="line-509">     *  {@inheritDoc}</span>
+<span class="source-line-no">510</span><span id="line-510">     */</span>
+<span class="source-line-no">511</span><span id="line-511">    @Override</span>
+<span class="source-line-no">512</span><span id="line-512">    public final void refresh() throws IOException { parse(); }</span>
+<span class="source-line-no">513</span><span id="line-513"></span>
+<span class="source-line-no">514</span><span id="line-514">    /**</span>
+<span class="source-line-no">515</span><span id="line-515">     *  Saves the contents of the INI file to the file that was provided to</span>
+<span class="source-line-no">516</span><span id="line-516">     *  {@link #create(Path)}</span>
+<span class="source-line-no">517</span><span id="line-517">     *  or</span>
+<span class="source-line-no">518</span><span id="line-518">     *  {@link #open(Path)}.</span>
+<span class="source-line-no">519</span><span id="line-519">     *</span>
+<span class="source-line-no">520</span><span id="line-520">     *  @throws IOException  A problem occurred when writing the contents to</span>
+<span class="source-line-no">521</span><span id="line-521">     *      the file.</span>
+<span class="source-line-no">522</span><span id="line-522">     */</span>
+<span class="source-line-no">523</span><span id="line-523">    @Override</span>
+<span class="source-line-no">524</span><span id="line-524">    public final void save() throws IOException</span>
+<span class="source-line-no">525</span><span id="line-525">    {</span>
+<span class="source-line-no">526</span><span id="line-526">        if( notExists( m_File ) )</span>
+<span class="source-line-no">527</span><span id="line-527">        {</span>
+<span class="source-line-no">528</span><span id="line-528">            final var folder = m_File.getParent();</span>
+<span class="source-line-no">529</span><span id="line-529">            if( notExists( folder ) ) createDirectories( folder );</span>
+<span class="source-line-no">530</span><span id="line-530">        }</span>
+<span class="source-line-no">531</span><span id="line-531">        m_LastUpdated = Instant.now( m_Clock );</span>
+<span class="source-line-no">532</span><span id="line-532">        writeString( m_File, dumpContents(), UTF8, CREATE, TRUNCATE_EXISTING, WRITE );</span>
+<span class="source-line-no">533</span><span id="line-533">    }   //  save()</span>
+<span class="source-line-no">534</span><span id="line-534"></span>
+<span class="source-line-no">535</span><span id="line-535">    /**</span>
+<span class="source-line-no">536</span><span id="line-536">     *  &lt;p&gt;{@summary Sets the clock that is used to determine the last</span>
+<span class="source-line-no">537</span><span id="line-537">     *  update.}&lt;/p&gt;</span>
+<span class="source-line-no">538</span><span id="line-538">     *  &lt;p&gt;This is used only for testing purposes.&lt;/p&gt;</span>
+<span class="source-line-no">539</span><span id="line-539">     *</span>
+<span class="source-line-no">540</span><span id="line-540">     *  @param  clock   The clock.</span>
+<span class="source-line-no">541</span><span id="line-541">     */</span>
+<span class="source-line-no">542</span><span id="line-542">    @SuppressWarnings( "PublicMethodNotExposedInInterface" )</span>
+<span class="source-line-no">543</span><span id="line-543">    public final void setClock( final Clock clock )</span>
+<span class="source-line-no">544</span><span id="line-544">    {</span>
+<span class="source-line-no">545</span><span id="line-545">        m_Clock = requireNonNullArgument( clock, "clock" );</span>
+<span class="source-line-no">546</span><span id="line-546">        m_LastUpdated = Instant.now( clock );</span>
+<span class="source-line-no">547</span><span id="line-547">    }   //  setClock()</span>
+<span class="source-line-no">548</span><span id="line-548"></span>
+<span class="source-line-no">549</span><span id="line-549">    /**</span>
+<span class="source-line-no">550</span><span id="line-550">     * {@inheritDoc}</span>
+<span class="source-line-no">551</span><span id="line-551">     *</span>
+<span class="source-line-no">552</span><span id="line-552">     *  @since 0.4.3</span>
+<span class="source-line-no">553</span><span id="line-553">     */</span>
+<span class="source-line-no">554</span><span id="line-554">    @API( status = STABLE, since = "0.4.3" )</span>
+<span class="source-line-no">555</span><span id="line-555">    @Override</span>
+<span class="source-line-no">556</span><span id="line-556">    public final void setComment( final String comment )</span>
+<span class="source-line-no">557</span><span id="line-557">    {</span>
+<span class="source-line-no">558</span><span id="line-558">        m_Comment.setLength( 0 );</span>
+<span class="source-line-no">559</span><span id="line-559">        addComment( comment );</span>
+<span class="source-line-no">560</span><span id="line-560">    }   //  setComment()</span>
+<span class="source-line-no">561</span><span id="line-561"></span>
+<span class="source-line-no">562</span><span id="line-562">    /**</span>
+<span class="source-line-no">563</span><span id="line-563">     * {@inheritDoc}</span>
+<span class="source-line-no">564</span><span id="line-564">     *</span>
+<span class="source-line-no">565</span><span id="line-565">     *  @since 0.4.3</span>
+<span class="source-line-no">566</span><span id="line-566">     */</span>
+<span class="source-line-no">567</span><span id="line-567">    @API( status = STABLE, since = "0.4.3" )</span>
+<span class="source-line-no">568</span><span id="line-568">    @Override</span>
+<span class="source-line-no">569</span><span id="line-569">    public final void setComment( final String group, final String comment )</span>
+<span class="source-line-no">570</span><span id="line-570">    {</span>
+<span class="source-line-no">571</span><span id="line-571">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">572</span><span id="line-572">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
+<span class="source-line-no">573</span><span id="line-573">        g.setComment( comment );</span>
+<span class="source-line-no">574</span><span id="line-574">    }   //  setComment()</span>
+<span class="source-line-no">575</span><span id="line-575"></span>
+<span class="source-line-no">576</span><span id="line-576">    /**</span>
+<span class="source-line-no">577</span><span id="line-577">     * {@inheritDoc}</span>
+<span class="source-line-no">578</span><span id="line-578">     *</span>
+<span class="source-line-no">579</span><span id="line-579">     *  @since 0.4.3</span>
+<span class="source-line-no">580</span><span id="line-580">     */</span>
+<span class="source-line-no">581</span><span id="line-581">    @API( status = STABLE, since = "0.4.3" )</span>
+<span class="source-line-no">582</span><span id="line-582">    @Override</span>
+<span class="source-line-no">583</span><span id="line-583">    public final void setComment( final String group, final String key, final String comment )</span>
+<span class="source-line-no">584</span><span id="line-584">    {</span>
+<span class="source-line-no">585</span><span id="line-585">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">586</span><span id="line-586">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
+<span class="source-line-no">587</span><span id="line-587">        g.setComment( requireValidArgument( key, "key", Value::checkKeyCandidate ), comment );</span>
+<span class="source-line-no">588</span><span id="line-588">    }   //  setComment()</span>
+<span class="source-line-no">589</span><span id="line-589"></span>
+<span class="source-line-no">590</span><span id="line-590">    /**</span>
+<span class="source-line-no">591</span><span id="line-591">     *  {@inheritDoc}</span>
+<span class="source-line-no">592</span><span id="line-592">     */</span>
+<span class="source-line-no">593</span><span id="line-593">    @Override</span>
+<span class="source-line-no">594</span><span id="line-594">    public final void setValue( final String group, final String key, final String value )</span>
+<span class="source-line-no">595</span><span id="line-595">    {</span>
+<span class="source-line-no">596</span><span id="line-596">        @SuppressWarnings( "LocalVariableNamingConvention" )</span>
+<span class="source-line-no">597</span><span id="line-597">        final var g = m_Groups.computeIfAbsent( requireValidArgument( group, "group", Group::checkGroupNameCandidate ), this::createGroup );</span>
+<span class="source-line-no">598</span><span id="line-598">        g.setValue( key, value );</span>
+<span class="source-line-no">599</span><span id="line-599">    }   //  setValue()</span>
+<span class="source-line-no">600</span><span id="line-600"></span>
+<span class="source-line-no">601</span><span id="line-601">    /**</span>
+<span class="source-line-no">602</span><span id="line-602">     *  Splits a comment to the proper line length.</span>
+<span class="source-line-no">603</span><span id="line-603">     *</span>
+<span class="source-line-no">604</span><span id="line-604">     *  @param  comment The comment to split.</span>
+<span class="source-line-no">605</span><span id="line-605">     *  @return The lines for the comment.</span>
+<span class="source-line-no">606</span><span id="line-606">     */</span>
+<span class="source-line-no">607</span><span id="line-607">    public static final Collection&lt;String&gt; splitComment( final CharSequence comment )</span>
+<span class="source-line-no">608</span><span id="line-608">    {</span>
+<span class="source-line-no">609</span><span id="line-609">        final Collection&lt;String&gt; retValue = new ArrayList&lt;&gt;();</span>
+<span class="source-line-no">610</span><span id="line-610"></span>
+<span class="source-line-no">611</span><span id="line-611">        if( !requireNonNullArgument( comment, "comment" ).isEmpty() )</span>
+<span class="source-line-no">612</span><span id="line-612">        {</span>
+<span class="source-line-no">613</span><span id="line-613">            //noinspection ConstantExpression</span>
+<span class="source-line-no">614</span><span id="line-614">            breakText( comment, LINE_LENGTH - 2 )</span>
+<span class="source-line-no">615</span><span id="line-615">                .map( "# "::concat )</span>
+<span class="source-line-no">616</span><span id="line-616">                .map( String::trim )</span>
+<span class="source-line-no">617</span><span id="line-617">                .forEach( retValue::add );</span>
+<span class="source-line-no">618</span><span id="line-618">        }</span>
 <span class="source-line-no">619</span><span id="line-619"></span>
-<span class="source-line-no">620</span><span id="line-620">    /**</span>
-<span class="source-line-no">621</span><span id="line-621">     *  {@inheritDoc}</span>
-<span class="source-line-no">622</span><span id="line-622">     */</span>
-<span class="source-line-no">623</span><span id="line-623">    @Override</span>
-<span class="source-line-no">624</span><span id="line-624">    public final String toString() { return dumpContents(); }</span>
-<span class="source-line-no">625</span><span id="line-625">}</span>
-<span class="source-line-no">626</span><span id="line-626">//  class INIFileImpl</span>
-<span class="source-line-no">627</span><span id="line-627"></span>
-<span class="source-line-no">628</span><span id="line-628">/*</span>
-<span class="source-line-no">629</span><span id="line-629"> *  End of File</span>
-<span class="source-line-no">630</span><span id="line-630"> */</span>
+<span class="source-line-no">620</span><span id="line-620">        //---* Done *----------------------------------------------------------</span>
+<span class="source-line-no">621</span><span id="line-621">        return retValue;</span>
+<span class="source-line-no">622</span><span id="line-622">    }   //  splitComment()</span>
+<span class="source-line-no">623</span><span id="line-623"></span>
+<span class="source-line-no">624</span><span id="line-624">    /**</span>
+<span class="source-line-no">625</span><span id="line-625">     *  {@inheritDoc}</span>
+<span class="source-line-no">626</span><span id="line-626">     */</span>
+<span class="source-line-no">627</span><span id="line-627">    @Override</span>
+<span class="source-line-no">628</span><span id="line-628">    public final String toString() { return dumpContents(); }</span>
+<span class="source-line-no">629</span><span id="line-629">}</span>
+<span class="source-line-no">630</span><span id="line-630">//  class INIFileImpl</span>
+<span class="source-line-no">631</span><span id="line-631"></span>
+<span class="source-line-no">632</span><span id="line-632">/*</span>
+<span class="source-line-no">633</span><span id="line-633"> *  End of File</span>
+<span class="source-line-no">634</span><span id="line-634"> */</span>
 
 
 

@@ -21,6 +21,8 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.tquadrat.foundation.util.StringUtils.splitString;
 
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.tquadrat.foundation.annotation.ClassVersion;
@@ -51,7 +53,9 @@ public class TestParse extends TestBaseClass
     {
         skipThreadTest();
 
-        final var candidate = new INIFileImpl( null );
+        final var candidateConstructor = INIFileImpl.class.getDeclaredConstructor( Path.class );
+        candidateConstructor.setAccessible( true );
+        final var candidate = candidateConstructor.newInstance( (Path) null );
 
         final String actual, expected;
 
@@ -59,10 +63,10 @@ public class TestParse extends TestBaseClass
             """
             # A test file for the configuration.
             # Last Update: 2021-05-01T19:29:37.779194450Z
-                            
+            
             # The Global parameters.
             [Global]
-                        
+            
             # Variable Number 1
             var1 = value1
             """;

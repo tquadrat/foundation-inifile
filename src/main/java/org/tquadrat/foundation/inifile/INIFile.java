@@ -164,8 +164,12 @@ public sealed interface INIFile
      *
      *  @param  file    The file.
      *  @return The new instance.
+     *  @throws IOException The file cannot be created.
      */
-    public static INIFile create( final Path file ) { return INIFileImpl.create( file ); }
+    public static INIFile create( final Path file ) throws IOException
+    {
+        return INIFileImpl.create( file );
+    }   //  create()
 
     /**
      *  Retrieves the value for the given key from the given group.

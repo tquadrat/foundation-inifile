@@ -24,6 +24,7 @@ import static java.nio.file.Files.notExists;
 import static java.nio.file.Files.readAllLines;
 import static java.nio.file.Files.writeString;
 import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Comparator.naturalOrder;
 import static java.util.regex.Pattern.compile;
@@ -151,7 +152,7 @@ public final class INIFileImpl implements INIFile
      *
      *  @param  file    The file that holds the contents.
      */
-    public INIFileImpl( final Path file )
+    private INIFileImpl( final Path file )
     {
         m_File = file;
         m_LastUpdated = Instant.now( m_Clock );
@@ -235,10 +236,12 @@ public final class INIFileImpl implements INIFile
      *
      *  @param  file    The file.
      *  @return The new instance.
+     *  @throws IOException The file cannot be created.
      */
-    public static final INIFile create( final Path file )
+    public static final INIFile create( final Path file ) throws IOException
     {
-        final INIFile retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );
+        final var retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );
+        retValue.save();
 
         //---* Done *----------------------------------------------------------
         return retValue;
@@ -409,7 +412,7 @@ public final class INIFileImpl implements INIFile
      */
     public static final INIFile open( final Path file ) throws IOException
     {
-        final var retValue = new INIFileImpl( requireNonNullArgument( file, "file" ) );
+        final var retValue = new INIFileImpl( file );
         retValue.parse();
 
         //---* Done *----------------------------------------------------------
@@ -494,6 +497,7 @@ public final class INIFileImpl implements INIFile
             final var pos = line.indexOf( '=' );
             if( pos < 1 ) throw new IOException( errorMessage.get() );
             final var key = line.substring( 0, pos ).trim();
+            @SuppressWarnings( "UnreachableCode" )
             final var data = line.length() > pos ? line.substring( pos + 1 ).trim().translateEscapes() : EMPTY_STRING;
             final var value = currentGroup.setValue( key, data );
             commentBuffer.forEach( value::addComment );
@@ -525,7 +529,7 @@ public final class INIFileImpl implements INIFile
             if( notExists( folder ) ) createDirectories( folder );
         }
         m_LastUpdated = Instant.now( m_Clock );
-        writeString( m_File, dumpContents(), UTF8, CREATE, WRITE );
+        writeString( m_File, dumpContents(), UTF8, CREATE, TRUNCATE_EXISTING, WRITE );
     }   //  save()
 
     /**

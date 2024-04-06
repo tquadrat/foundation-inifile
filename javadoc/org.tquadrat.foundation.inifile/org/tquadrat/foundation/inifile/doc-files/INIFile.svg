@@ -251,7 +251,7 @@
                     <text y='96.000'
                           class='static final'>- LAST_UPDATED_PATTERN:java.util.regex.Pattern</text>
                     <text x='5.000'
-                          y='113.000'>+ INIFileImpl(file:java.nio.file.Path)</text>
+                          y='113.000'>- INIFileImpl(file:java.nio.file.Path)</text>
                     <text x='5.000'
                           y='124.000'>+ addComment(comment:java.lang.String):void</text>
                     <text x='5.000'

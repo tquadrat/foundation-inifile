@@ -35,7 +35,7 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
  */
-@ClassVersion( sourceVersion = "$Id: TestParse.java 940 2021-12-16 13:55:52Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: TestParse.java 1128 2024-04-06 07:17:56Z tquadrat $" )
 @DisplayName( "org.tquadrat.foundation.inifile.internal.inifileimpl.TestParse" )
 public class TestParse extends TestBaseClass
 {

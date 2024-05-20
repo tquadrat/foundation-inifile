@@ -497,8 +497,9 @@ public final class INIFileImpl implements INIFile
             final var pos = line.indexOf( '=' );
             if( pos < 1 ) throw new IOException( errorMessage.get() );
             final var key = line.substring( 0, pos ).trim();
-            @SuppressWarnings( "UnreachableCode" )
-            final var data = line.length() > pos ? line.substring( pos + 1 ).trim().translateEscapes() : EMPTY_STRING;
+            final var data = line.trim().length() > pos + 1
+                ? line.substring( pos + 1 ).trim().translateEscapes()
+                : null;
             final var value = currentGroup.setValue( key, data );
             commentBuffer.forEach( value::addComment );
             commentBuffer.clear();

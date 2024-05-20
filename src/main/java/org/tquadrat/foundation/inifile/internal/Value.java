@@ -26,6 +26,7 @@ import static org.tquadrat.foundation.inifile.internal.INIFileImpl.breakString;
 import static org.tquadrat.foundation.inifile.internal.INIFileImpl.splitComment;
 import static org.tquadrat.foundation.lang.CommonConstants.EMPTY_STRING;
 import static org.tquadrat.foundation.lang.Objects.hash;
+import static org.tquadrat.foundation.lang.Objects.isNull;
 import static org.tquadrat.foundation.lang.Objects.requireNonNullArgument;
 import static org.tquadrat.foundation.lang.Objects.requireNotBlankArgument;
 import static org.tquadrat.foundation.lang.Objects.requireValidArgument;
@@ -244,7 +245,13 @@ public final class Value implements Comparable<Value>
             buffer.add( EMPTY_STRING );
             splitComment( m_Comment ).forEach( buffer::add );
         }
-        breakString( format( "%s = %s", m_Key, m_Value ) ).forEach( buffer::add );
+        final var value = isNull( m_Value )
+            ? EMPTY_STRING
+            : m_Value.endsWith( " " )
+                ? m_Value.substring( 0, m_Value.length() - 1 ).concat( "\\s" )
+                : m_Value;
+        breakString( format( "%s = %s", m_Key, isNull( m_Value ) ? EMPTY_STRING : value ) )
+            .forEach( buffer::add );
         final var retValue = buffer.toString();
 
         //---* Done *----------------------------------------------------------

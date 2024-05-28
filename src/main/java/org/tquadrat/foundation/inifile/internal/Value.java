@@ -43,13 +43,13 @@ import org.tquadrat.foundation.lang.Objects;
  *  The container for the value of an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Value.java 1105 2024-02-28 12:58:46Z tquadrat $
+ *  @version $Id: Value.java 1134 2024-05-20 16:53:16Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
 @SuppressWarnings( "NewClassNamingConvention" )
-@ClassVersion( sourceVersion = "$Id: Value.java 1105 2024-02-28 12:58:46Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: Value.java 1134 2024-05-20 16:53:16Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class Value implements Comparable<Value>
 {

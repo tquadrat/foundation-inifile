@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- *  Copyright © 2002-2021 by Thomas Thrien.
+ *  Copyright © 2002-2026 by Thomas Thrien.
  *  All Rights Reserved.
  * ============================================================================
  *  Licensed to the public under the agreements of the GNU Lesser General Public
@@ -21,7 +21,7 @@
  *  '{@code .ini}' of these files.}</p>
  *  <p>These files are text files with UTF-8 encoding and do look like
  *  below:</p>
- *  <pre><code>
+ *  <blockquote><pre><code>
  *  # This is a comment line
  *  [Group]
  *  key=value
@@ -33,7 +33,7 @@
  *  continued in the next line
  *  text=Values may contain escape sequences like \n for new lines, \
  *  and \t for tabs.
- *  </code></pre>
+ *  </code></pre></blockquote>
  *  <ul>
  *      <li>Empty lines are ignored.</li>
  *      <li>A line that ends with a backslash (&quot;\&quot;) will be concatenated with the following line.</li>

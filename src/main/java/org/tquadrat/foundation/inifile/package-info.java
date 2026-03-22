@@ -50,9 +50,9 @@
 @API( status = STABLE, since = "0.1.0" )
 package org.tquadrat.foundation.inifile;
 
-import static org.apiguardian.api.API.Status.STABLE;
-
 import org.apiguardian.api.API;
+
+import static org.apiguardian.api.API.Status.STABLE;
 
 /*
  *  End of File

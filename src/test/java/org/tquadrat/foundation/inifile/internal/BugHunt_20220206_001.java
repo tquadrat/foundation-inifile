@@ -45,10 +45,10 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
 /**
  *  Issues when the INI file does not exist.
  *
- *  @version $Id: BugHunt_20220206_001.java 1076 2023-10-03 18:36:07Z tquadrat $
+ *  @version $Id: BugHunt_20220206_001.java 1186 2026-04-06 11:24:14Z tquadrat $
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
  */
-@ClassVersion( sourceVersion = "$Id: BugHunt_20220206_001.java 1076 2023-10-03 18:36:07Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: BugHunt_20220206_001.java 1186 2026-04-06 11:24:14Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 @DisplayName( "org.tquadrat.foundation.inifile.internal.BugHunt_20220206_001" )
 public class BugHunt_20220206_001 extends TestBaseClass
@@ -73,7 +73,7 @@ public class BugHunt_20220206_001 extends TestBaseClass
     @AfterEach
     final void cleanup()
     {
-        m_PlaygroundGuard.execute( () ->
+        m_PlaygroundGuard.perform( () ->
         {
             if( nonNull( m_Playground ) )
             {

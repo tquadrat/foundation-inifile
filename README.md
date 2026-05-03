@@ -8,6 +8,8 @@ An API for the access to Windows-style configuratin files (*INI-Files*).
     <dependency>
       <groupId>org.tquadrat.library</groupId>
       <artifactId>org.tquadrat.foundation.inifile</artifactId>
-      <version>0.1.0</version>
+      <version>0.25.3</version>
     </dependency>
     ```
+---  
+Last updated: 2026-05-03T17:28:56.692414092+02:00[Europe/Berlin]

@@ -12,4 +12,4 @@ An API for the access to Windows-style configuratin files (*INI-Files*).
     </dependency>
     ```
 ---  
-Last updated: 2026-05-04T21:22:24.718672919+02:00[Europe/Berlin]
+Last updated: 2026-05-05T10:23:25.18315176+02:00[Europe/Berlin]

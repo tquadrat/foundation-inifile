@@ -46,13 +46,13 @@ import org.tquadrat.foundation.annotation.ClassVersion;
  *  The group for an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Group.java 1105 2024-02-28 12:58:46Z tquadrat $
+ *  @version $Id: Group.java 1258 2026-06-04 18:33:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
 @SuppressWarnings( "NewClassNamingConvention" )
-@ClassVersion( sourceVersion = "$Id: Group.java 1105 2024-02-28 12:58:46Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: Group.java 1258 2026-06-04 18:33:06Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class Group implements Comparable<Group>
 {
@@ -129,9 +129,9 @@ public final class Group implements Comparable<Group>
      *  brackets ('['), too, although they are technically allowed.</p>
      *
      *  @param  candidate   The key or name to check.
-     *  @return {@code true} if the value is a valid name or key.
+     *  @return {@true} if the value is a valid name or key.
      *  @throws org.tquadrat.foundation.exception.NullArgumentException The
-     *      candidate is {@code null}.
+     *      candidate is {@null}.
      *  @throws org.tquadrat.foundation.exception.EmptyArgumentException    The
      *      candidate is the empty string.
      *  @throws org.tquadrat.foundation.exception.BlankArgumentException    The
@@ -282,7 +282,7 @@ public final class Group implements Comparable<Group>
      *  Sets the given value for the given key.
      *
      *  @param  key The key.
-     *  @param  value   The new value; can be {@code null}.
+     *  @param  value   The new value; can be {@null}.
      *  @return The instance of
      *      {@link Value}
      *      for the new value.

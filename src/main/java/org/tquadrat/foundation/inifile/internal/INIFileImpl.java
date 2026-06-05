@@ -69,12 +69,12 @@ import org.tquadrat.foundation.util.stringconverter.PathStringConverter;
  *  {@link INIFile}.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFileImpl.java 1151 2025-10-01 21:32:15Z tquadrat $
+ *  @version $Id: INIFileImpl.java 1258 2026-06-04 18:33:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
-@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1151 2025-10-01 21:32:15Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFileImpl.java 1258 2026-06-04 18:33:06Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class INIFileImpl implements INIFile
 {
@@ -143,7 +143,7 @@ public final class INIFileImpl implements INIFile
     /**
      *  <p>{@summary Creates a new instance of {@code INIFileImpl}.}</p>
      *  <p>The constructor does not check whether the <i>file</i> argument is
-     *  {@code null}; this has to be done by the factory methods
+     *  {@null}; this has to be done by the factory methods
      *  {@link #create(Path)}
      *  and
      *  {@link #open(Path)}.</p>

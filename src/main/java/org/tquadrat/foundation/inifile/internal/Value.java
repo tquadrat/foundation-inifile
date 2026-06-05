@@ -43,13 +43,13 @@ import org.tquadrat.foundation.lang.Objects;
  *  The container for the value of an INI file.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: Value.java 1134 2024-05-20 16:53:16Z tquadrat $
+ *  @version $Id: Value.java 1258 2026-06-04 18:33:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
 @SuppressWarnings( "NewClassNamingConvention" )
-@ClassVersion( sourceVersion = "$Id: Value.java 1134 2024-05-20 16:53:16Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: Value.java 1258 2026-06-04 18:33:06Z tquadrat $" )
 @API( status = INTERNAL, since = "0.1.0" )
 public final class Value implements Comparable<Value>
 {
@@ -135,10 +135,10 @@ public final class Value implements Comparable<Value>
      *  despite they are technically valid.</p>
      *
      *  @param  candidate   The key to check.
-     *  @return {@code true} if the value is a valid key, {@code false}
+     *  @return {@true} if the value is a valid key, {@false}
      *      otherwise.
      *  @throws org.tquadrat.foundation.exception.NullArgumentException The
-     *      candidate is {@code null}.
+     *      candidate is {@null}.
      *  @throws org.tquadrat.foundation.exception.EmptyArgumentException    The
      *      candidate is the empty string.
      *  @throws org.tquadrat.foundation.exception.BlankArgumentException    The
@@ -200,7 +200,7 @@ public final class Value implements Comparable<Value>
     /**
      *  Returns the current value.
      *
-     *  @return The current value; can be {@code null}.
+     *  @return The current value; can be {@null}.
      */
     public final String getValue() { return m_Value; }
 
@@ -229,7 +229,7 @@ public final class Value implements Comparable<Value>
     /**
      *  Sets a new value.
      *
-     *  @param  value   The new value; can be {@code null}.
+     *  @param  value   The new value; can be {@null}.
      */
     public final void setValue( final String value ) { m_Value = value; }
 

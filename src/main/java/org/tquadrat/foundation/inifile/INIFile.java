@@ -41,13 +41,13 @@ import org.tquadrat.foundation.lang.StringConverter;
  *  @note   Changes will not be persisted automatically!
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
- *  @version $Id: INIFile.java 1128 2024-04-06 07:17:56Z tquadrat $
+ *  @version $Id: INIFile.java 1258 2026-06-04 18:33:06Z tquadrat $
  *
  *  @UMLGraph.link
  *  @since 0.1.0
  */
 @SuppressWarnings( "ClassWithTooManyMethods" )
-@ClassVersion( sourceVersion = "$Id: INIFile.java 1128 2024-04-06 07:17:56Z tquadrat $" )
+@ClassVersion( sourceVersion = "$Id: INIFile.java 1258 2026-06-04 18:33:06Z tquadrat $" )
 @API( status = STABLE, since = "0.1.0" )
 public sealed interface INIFile
     permits org.tquadrat.foundation.inifile.internal.INIFileImpl
@@ -59,7 +59,7 @@ public sealed interface INIFile
      *  An entry for the INI file.
      *
      *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
-     *  @version $Id: INIFile.java 1128 2024-04-06 07:17:56Z tquadrat $
+     *  @version $Id: INIFile.java 1258 2026-06-04 18:33:06Z tquadrat $
      *
      *  @param  group   The group for the entry.
      *  @param  key The key for the entry.
@@ -105,7 +105,7 @@ public sealed interface INIFile
          *  @param  stringConverter The implementation of
          *      {@link StringConverter}
          *      that is used to convert the stored value into the target type.
-         *  @return The value; can be {@code null}.
+         *  @return The value; can be {@null}.
          */
         public final <T> T value( final StringConverter<? extends T> stringConverter )
         {
@@ -188,7 +188,7 @@ public sealed interface INIFile
      *  @param  group   The group.
      *  @param  key The key for the value.
      *  @param  defaultValue    The value that will be returned if no other
-     *      value could be found; can be {@code null}.
+     *      value could be found; can be {@null}.
      *  @return The value.
      */
     public default String getValue( final String group, final String key, final String defaultValue )
@@ -224,7 +224,7 @@ public sealed interface INIFile
      *      {@link StringConverter}
      *      that is used to convert the stored value into the target type.
      *  @param  defaultValue    The value that will be returned if no other
-     *      value could be found; can be {@code null}.
+     *      value could be found; can be {@null}.
      *  @return The value.
      */
     public default <T> T getValue( final String group, final String key, final StringConverter<T> stringConverter, final T defaultValue )
@@ -239,11 +239,11 @@ public sealed interface INIFile
      *  <p>{@summary Checks whether the INI file contains a group with the
      *  given name.}</p>
      *  <p>This method will not throw an exception for an invalid group name;
-     *  instead it returns {@code false}.</p>
+     *  instead it returns {@false}.</p>
      *
      *  @param  group   The group.
-     *  @return {@code true} if there is a group with the given name,
-     *      {@code false} otherwise.
+     *  @return {@true} if there is a group with the given name,
+     *      {@false} otherwise.
      */
     @SuppressWarnings( "BooleanMethodIsAlwaysInverted" )
     public boolean hasGroup( final String group );
@@ -252,12 +252,12 @@ public sealed interface INIFile
      *  <p>{@summary Checks whether the INI file contains an entry with the
      *  given key.}</p>
      *  <p>This method will not throw an exception for an invalid group name or
-     *  an invalid key; instead it returns {@code false}.</p>
+     *  an invalid key; instead it returns {@false}.</p>
      *
      *  @param  group   The group.
      *  @param  key The key.
-     *  @return {@code true} if there is an entry with the given key,
-     *      {@code false} otherwise.
+     *  @return {@true} if there is an entry with the given key,
+     *      {@false} otherwise.
      */
     @SuppressWarnings( "BooleanMethodIsAlwaysInverted" )
     public boolean hasValue( final String group, final String key );

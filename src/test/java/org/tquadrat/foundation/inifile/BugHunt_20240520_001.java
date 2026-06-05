@@ -33,7 +33,7 @@ import org.tquadrat.foundation.testutil.TestBaseClass;
 import org.tquadrat.foundation.util.stringconverter.CurrencyStringConverter;
 
 /**
- *  When a value is set to {@code null}, the String &quot;null&quot; will be
+ *  When a value is set to {@null}, the String &quot;null&quot; will be
  *  persisted.
  *
  *  @extauthor Thomas Thrien - thomas.thrien@tquadrat.org
@@ -45,7 +45,7 @@ public class BugHunt_20240520_001 extends TestBaseClass
     ====** Methods **==========================================================
         \*---------*/
     /**
-     *  When a value is set to {@code null}, the String &quot;null&quot; will be
+     *  When a value is set to {@null}, the String &quot;null&quot; will be
      *  persisted.
      *
      *  @throws Exception   Something went wrong unexpectedly.

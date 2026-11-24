@@ -34,7 +34,6 @@ import org.tquadrat.foundation.annotation.ClassVersion;
 import org.tquadrat.foundation.exception.BlankArgumentException;
 import org.tquadrat.foundation.exception.EmptyArgumentException;
 import org.tquadrat.foundation.exception.NullArgumentException;
-import org.tquadrat.foundation.exception.ValidationException;
 import org.tquadrat.foundation.testutil.TestBaseClass;
 
 /**
@@ -126,7 +125,7 @@ public class TestValue extends TestBaseClass
         final var group = new Group( "name" );
         final var value = "value";
 
-        assertThrows( ValidationException.class, () -> new Value( group, key, value ) );
+        assertThrows( IllegalArgumentException.class, () -> new Value( group, key, value ) );
     }   //  testConstructorWithInvalidArgument()
 
     /**

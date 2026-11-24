@@ -34,7 +34,6 @@ import org.tquadrat.foundation.annotation.ClassVersion;
 import org.tquadrat.foundation.exception.BlankArgumentException;
 import org.tquadrat.foundation.exception.EmptyArgumentException;
 import org.tquadrat.foundation.exception.NullArgumentException;
-import org.tquadrat.foundation.exception.ValidationException;
 import org.tquadrat.foundation.testutil.TestBaseClass;
 
 /**
@@ -108,7 +107,7 @@ public class TestGroup extends TestBaseClass
     {
         skipThreadTest();
 
-        assertThrows( ValidationException.class, () -> new Group( name ) );
+        assertThrows( IllegalArgumentException.class, () -> new Group( name ) );
     }   //  testConstructorWithEmptyArgument()
 
     /**
